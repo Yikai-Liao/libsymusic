@@ -6,10 +6,13 @@
 #include <sstream>
 #include "nanobench.h"
 #include "symusic.h"
+#include "fmt/core.h"
 
 using namespace symusic;
 
 int main(){
+    fmt::print("{}, {}\n", "Hello", "world");
+
     // bench sstream and fmt::format
     ankerl::nanobench::Bench().run("sstream", []{
         for(int i = 0; i < 1000; i++) {
@@ -33,6 +36,14 @@ int main(){
             char buf[100];
             sprintf(buf, "Hello, world %d !\n", rand());
             ankerl::nanobench::doNotOptimizeAway(buf);
+        }
+    });
+
+    // fmt::format
+    ankerl::nanobench::Bench().run("fmt::format", []{
+        for (int i = 0; i < 1000; i++) {
+            std::string s = fmt::format("Hello, world {} !\n", rand());
+            ankerl::nanobench::doNotOptimizeAway(s);
         }
     });
     return 0;
