@@ -1,0 +1,15 @@
+[submodule "zpp_bits"]
+	path = 3rdparty/zpp_bits
+	url = https://github.com/eyalz800/zpp_bits.git
+[submodule "minimidi"]
+	path = 3rdparty/minimidi
+	url = git@github.com:lzqlzzq/minimidi.git
+[submodule "fmt"]
+	path = 3rdparty/fmt
+	url = https://github.com/fmtlib/fmt.git
+[submodule "pdqsort"]
+	path = 3rdparty/pdqsort
+	url = https://github.com/orlp/pdqsort.git
+[submodule "nanobench"]
+	path = 3rdparty/nanobench
+	url = https://github.com/martinus/nanobench.git
