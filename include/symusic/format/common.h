@@ -6,6 +6,7 @@
 #define LIBSYMUSIC_FMT_COMMON_H
 
 #include "symusic/container.h"
+#include <cstdio>
 
 namespace symusic {
 
@@ -13,7 +14,8 @@ namespace details {
     inline vec<u8> read_file(const std::filesystem::path & path) {
         if(!exists(path)) { throw std::runtime_error("File not found"); }
         // use fread to load the file
-        FILE * file = fopen(path.c_str(), "rb");
+        // convert path to char*
+        FILE * file = fopen(path.string().c_str(), "rb");
         if(!file) { throw std::runtime_error("File not found"); }
         fseek(file, 0, SEEK_END);
         const auto size = ftell(file);
