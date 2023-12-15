@@ -4,6 +4,7 @@
 [submodule "minimidi"]
 	path = 3rdparty/minimidi
 	url = git@github.com:lzqlzzq/minimidi.git
+	brach = write-midi
 [submodule "fmt"]
 	path = 3rdparty/fmt
 	url = https://github.com/fmtlib/fmt.git
