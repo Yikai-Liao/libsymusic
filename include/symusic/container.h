@@ -5,7 +5,7 @@
 #ifndef LIBSYMUSIC_CONTAINER_H
 #define LIBSYMUSIC_CONTAINER_H
 
-#include <bits/stringfwd.h>
+#include <string>
 #include <filesystem>
 #include <span>
 #include "symusic/tag.h"
@@ -16,9 +16,9 @@ namespace symusic {
     T() = default;                                              \
     T(const T&) = default;                                      \
     T(T&&) noexcept = default;                                  \
-    T& operator=(const T&) = default;                           \
-    T& operator=(T&&) noexcept = default;                       \
     T copy() const { return {*this}; }
+//    T& operator=(const T&) = default;                           \
+//    T& operator=(T&&) noexcept = default;                       \
 
 // Define Basic Declarations for TimeStamp
 #define BASIC_TIMESTAMP_METHODS(EVENT, T)                       \
