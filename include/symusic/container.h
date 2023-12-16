@@ -157,9 +157,6 @@ struct TextMeta: TimeStamp<T> {
     TextMeta(const unit time, std::string  text):
         TimeStamp<T>{time}, text{std::move(text)} {}
 
-    TextMeta(const unit time, std::string && text):
-        TimeStamp<T>{time}, text{std::move(text)} {}
-
     template<class U>
     TextMeta(const unit time, const TextMeta<U> & other):
         TimeStamp<T>{time}, text{other.text} {}
