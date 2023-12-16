@@ -10,11 +10,11 @@
 
 namespace symusic::details {
 // The parsing midi in quarter and second is dependent on the tick
-inline Score<tag::Quarter> parse_midi_quarter(const std::span<u8> buffer) {
+inline Score<tag::Quarter> parse_midi_quarter(const std::span<const u8> buffer) {
     return parse_midi_tick(buffer).to<tag::Quarter>();
 }
 
-inline Score<tag::Second> parse_midi_second(const std::span<u8> buffer) {
+inline Score<tag::Second> parse_midi_second(const std::span<const u8> buffer) {
     return parse_midi_tick(buffer).to<tag::Second>();
 }
 
