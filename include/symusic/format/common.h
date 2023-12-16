@@ -40,7 +40,7 @@ Score<T> Score<T>::from(const std::filesystem::path & path) {
 }
 
 template<trait::TType T> template<trait::Format U>
-void Score<T>::dump(const std::filesystem::path & path){
+void Score<T>::dump(const std::filesystem::path & path) const {
     const vec<u8> buffer = this->template dumps<U>();
     details::write_file(path, std::span<const u8>(buffer));
 }

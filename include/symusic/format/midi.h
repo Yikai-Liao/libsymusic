@@ -42,5 +42,21 @@ template<> template<> // a static function
 inline Score<tag::Second> Score<tag::Second>::from<tag::Midi>(const std::span<const u8> buffer) {
     return details::parse_midi_second(buffer);
 }
+
+template<> template<>
+inline vec<u8> Score<tag::Tick>::dumps<tag::Midi>() const {
+    return details::dumps_midi_tick(*this);
+}
+
+template<> template<>
+inline vec<u8> Score<tag::Quarter>::dumps<tag::Midi>() const {
+    return details::dumps_midi_quarter(*this);
+}
+
+template<> template<>
+inline vec<u8> Score<tag::Second>::dumps<tag::Midi>() const {
+    return details::dumps_midi_second(*this);
+}
+
 }   // symusic
 #endif //LIBSYMUSIC_MIDI_H

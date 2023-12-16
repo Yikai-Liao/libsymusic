@@ -274,13 +274,13 @@ struct Score {
     static Score from(const std::filesystem::path & path);
 
     template<trait::Format U>
-    void dump(const std::filesystem::path & path);
+    void dump(const std::filesystem::path & path) const;
 
     template<trait::Format U>   // from buffer
     static Score from(std::span<const u8> buffer);
 
     template<trait::Format U>
-    vec<u8> dumps();
+    vec<u8> dumps() const;
 
     [[nodiscard]] unit start() const;
     [[nodiscard]] unit end() const;
