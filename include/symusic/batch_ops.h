@@ -15,11 +15,17 @@ namespace ops {
 
 // cmp function
 template<trait::TimeEvent T>
-void sort(
+void sort_branchless(
     const vec<T> & events,
     std::function<bool(const T&, const T&)> cmp =
         [](const T& a, const T& b) { return (a.time) < (b.time); } // () is for making clion happy
 );
+
+template<typename T, class Compare>
+void sort(vec<T>& data, Compare cmp);
+
+template<class Iter, class Compare>
+void sort(Iter begin, Iter end, Compare comp);
 
 template<trait::TimeEvent T>
 vec<T> filter(const vec<T>& events, std::function<bool(const T&)> t_fiter);

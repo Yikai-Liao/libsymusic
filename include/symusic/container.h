@@ -16,9 +16,9 @@ namespace symusic {
     T() = default;                                              \
     T(const T&) = default;                                      \
     T(T&&) noexcept = default;                                  \
-    T copy() const { return {*this}; }
-//    T& operator=(const T&) = default;                           \
-//    T& operator=(T&&) noexcept = default;                       \
+    T copy() const { return {*this}; }                          \
+    T& operator=(const T&) = default;                           \
+    T& operator=(T&&) noexcept = default;
 
 // Define Basic Declarations for TimeStamp
 #define BASIC_TIMESTAMP_METHODS(EVENT, T)                       \

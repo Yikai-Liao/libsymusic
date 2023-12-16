@@ -7,8 +7,12 @@ option(BUILD_TEST "Build the test target" ON)
 add_subdirectory(3rdparty/fmt EXCLUDE_FROM_ALL)
 
 # create library target: libsymusic
-add_library(libsymusic STATIC src/container.cpp src/format/midi.cpp
-        src/format/zpp.cpp)
+add_library(libsymusic STATIC
+        src/container.cpp
+        src/format/midi.cpp
+        src/format/zpp.cpp
+        src/utils.cpp
+        src/batch_ops.cpp)
 target_include_directories(libsymusic PUBLIC ./include)
 # expose headers
 # link to 3rdparty
