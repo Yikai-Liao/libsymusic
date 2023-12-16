@@ -271,7 +271,7 @@ struct Score {
     static Score from(const Score<U> & other);
 
     template<trait::TType U>
-    Score<U> to();
+    Score<U> to() const;
 
     template<trait::Format U>   // from path(file)
     static Score from(const std::filesystem::path & path);
@@ -280,10 +280,10 @@ struct Score {
     void dump(const std::filesystem::path & path);
 
     template<trait::Format U>   // from buffer
-    static Score from(std::span<u8> buffer);
+    static Score from(std::span<const u8> buffer);
 
     template<trait::Format U>
-    std::vector<u8> dumps();
+    vec<u8> dumps();
 
     [[nodiscard]] unit start() const;
     [[nodiscard]] unit end() const;

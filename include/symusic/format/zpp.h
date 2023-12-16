@@ -17,24 +17,24 @@ struct Zpp: FormatTag<Empty>{};
 
 namespace details {
 template<trait::TType T>
-Score<T> parse_zpp(std::span<u8> buffer);
+Score<T> parse_zpp(std::span<const u8> buffer);
 
 template<trait::TType T>
 vec<u8> dumps_zpp(const Score<T> &score);
 }
 
 template<> template<>
-inline Score<tag::Tick> Score<tag::Tick>::from<tag::Zpp>(const std::span<u8> buffer) {
+inline Score<tag::Tick> Score<tag::Tick>::from<tag::Zpp>(const std::span<const u8> buffer) {
     return details::parse_zpp<tag::Tick>(buffer);
 }
 
 template<> template<>
-inline Score<tag::Quarter> Score<tag::Quarter>::from<tag::Zpp>(const std::span<u8> buffer) {
+inline Score<tag::Quarter> Score<tag::Quarter>::from<tag::Zpp>(const std::span<const u8> buffer) {
     return details::parse_zpp<tag::Quarter>(buffer);
 }
 
 template<> template<>
-inline Score<tag::Second> Score<tag::Second>::from<tag::Zpp>(const std::span<u8> buffer) {
+inline Score<tag::Second> Score<tag::Second>::from<tag::Zpp>(const std::span<const u8> buffer) {
     return details::parse_zpp<tag::Second>(buffer);
 }
 }  // symusic

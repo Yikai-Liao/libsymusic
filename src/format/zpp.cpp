@@ -7,7 +7,7 @@
 
 namespace symusic::details {
 template<trait::TType T>
-Score<T> parse_zpp(std::span<u8> buffer) {
+Score<T> parse_zpp(std::span<const u8> buffer) {
     vec<u8> data(buffer.begin(), buffer.end());
     auto in = zpp::bits::in(data);
     Score<T> s;
