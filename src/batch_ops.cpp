@@ -6,9 +6,21 @@
 
 namespace symusic::ops {
 
+template<typename T, class Compare>
+void sort_branchless(const vec<T> & data, Compare cmp) {
+    pdqsort_branchless(data.begin(), data.end(), cmp);
+}
+
 template<trait::TimeEvent T>
-void sort_branchless(const vec<T> & events, std::function<bool(const T&, const T&)> cmp) {
-    pdqsort_branchless(events.begin(), events.end(), cmp);
+void sort_branchless(const vec<T> & data) {
+    pdqsort_branchless(data.begin(), data.end(), [](const T& a, const T& b) {
+        return (a.time) < (b.time);
+    });
+}
+
+template<class Iter, class Compare>
+void sort_branchless(Iter begin, Iter end, Compare comp) {
+    pdqsort_branchless(begin, end, comp);
 }
 
 template<class T, class Compare>

@@ -259,10 +259,90 @@ inline Score<tag::Tick> parse_midi_tick(const std::span<const u8> buffer) {
     ops::sort_branchless(score.lyrics);
     ops::sort_branchless(score.markers);
     return score;
-}
+} // parse_midi_tick
 
 inline vec<u8> dumps_midi_tick(const Score<tag::Tick>& score) {
-    throw std::runtime_error("Not implemented");
-}
+    namespace message = minimidi::message;
 
-}   // symusic
+    minimidi::file::MidiFile midi{
+        minimidi::file::MidiFormat::MultiTrack, 0,
+        static_cast<u16>(score.ticks_per_quarter)
+    };
+    midi.tracks.reserve(score.tracks.size() + 1);
+    {   // add meta messages
+        message::Messages msgs{};
+        msgs.reserve(
+            score.time_signatures.size() + score.key_signatures.size() +
+            score.tempos.size() + score.lyrics.size() + score.markers.size() + 10);
+        // add time signatures
+        for(const auto &time_signature: score.time_signatures) {
+            msgs.emplace_back(message::Message::TimeSignature(
+                time_signature.time, time_signature.numerator, time_signature.denominator
+            ));
+        }
+        // add key signatures
+        for(const auto &key_signature: score.key_signatures) {
+            msgs.emplace_back(message::Message::KeySignature(
+                key_signature.time, key_signature.key, key_signature.tonality
+            ));
+        }
+        // add tempos
+        for(const auto &tempo: score.tempos) {
+            msgs.emplace_back(message::Message::SetTempo(
+                tempo.time, static_cast<u32>(60000000.f / tempo.qpm)
+            ));
+        }
+        // add lyrics
+        for(const auto &lyric: score.lyrics) {
+            msgs.emplace_back(message::Message::Lyric(lyric.time, lyric.text));
+        }
+        // add markers
+        for(const auto &marker: score.markers) {
+            msgs.emplace_back(message::Message::Marker(marker.time, marker.text));
+        }
+        ops::sort_branchless(msgs.begin(), msgs.end(), [](const auto &a, const auto &b) {
+            return a.get_time() < b.get_time();
+        });
+        midi.tracks.emplace_back(std::move(msgs));
+    }
+
+    for(const auto &track: score.tracks) {
+        message::Messages msgs{};
+        msgs.reserve(track.note_num() * 2 + track.controls.size() + track.pitch_bends.size() + 10);
+        const u8 channel = track.is_drum ? 9 : 0;
+        // add track name
+        if(!track.name.empty())
+            msgs.emplace_back(message::Message::TrackName(0, track.name));
+        // add program change
+        msgs.emplace_back(message::Message::ProgramChange(0, channel, track.program));
+        // Todo add check for Pedal
+        // add control change
+        for(const auto &control: track.controls) {
+            msgs.emplace_back(message::Message::ControlChange(
+                control.time, channel, control.number, control.value
+            ));
+        }
+        // add pitch bend
+        for(const auto &pitch_bend: track.pitch_bends) {
+            msgs.emplace_back(message::Message::PitchBend(
+                pitch_bend.time, channel, static_cast<i16>(pitch_bend.value)
+            ));
+        }
+        // add notes
+        for(const auto &note: track.notes) {
+            msgs.emplace_back(message::Message::NoteOn(
+                note.time, channel, note.pitch, note.velocity
+            ));
+            msgs.emplace_back(message::Message::NoteOff(
+                note.end(), channel, note.pitch, note.velocity
+            ));
+        }
+        ops::sort_branchless(msgs.begin(), msgs.end(), [](const auto &a, const auto &b) {
+            return a.get_time() < b.get_time();
+        });
+        midi.tracks.emplace_back(std::move(msgs));
+    }
+    return midi.to_bytes();
+} // dumps_midi_tick
+
+}

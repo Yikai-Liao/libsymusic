@@ -9,17 +9,17 @@
 #include "symusic/alias.h"
 #include "symusic/tag.h"
 
-namespace symusic {
-
-namespace ops {
+namespace symusic::ops {
 
 // cmp function
+template<typename T, class Compare>
+void sort_branchless(const vec<T> & data, Compare cmp);
+
 template<trait::TimeEvent T>
-void sort_branchless(
-    const vec<T> & events,
-    std::function<bool(const T&, const T&)> cmp =
-        [](const T& a, const T& b) { return (a.time) < (b.time); } // () is for making clion happy
-);
+void sort_branchless(const vec<T> & data);
+
+template<class Iter, class Compare>
+void sort_branchless(Iter begin, Iter end, Compare comp);
 
 template<typename T, class Compare>
 void sort(vec<T>& data, Compare cmp);
@@ -38,5 +38,5 @@ vec<T> clip(const vec<T>& events, typename T::unit start, bool clip_end);
 
 
 }
-}
+
 #endif //LIBSYMUSIC_BATCH_OPS_H
