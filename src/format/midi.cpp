@@ -3,29 +3,13 @@
 //
 #include "MiniMidi.hpp"
 #include "symusic/utils.h"
-#include "symusic/batch_ops.h"
-#include "symusic/format/midi.h"
+#include "symusic/inner/io.h"
+#include "symusic/ops.h"
+#include "symusic/conversion.h"
 #include <queue>
 #include <map>
 
 namespace symusic::details {
-// The parsing midi in quarter and second is dependent on the tick
-inline Score<tag::Quarter> parse_midi_quarter(const std::span<const u8> buffer) {
-    return parse_midi_tick(buffer).to<tag::Quarter>();
-}
-
-inline Score<tag::Second> parse_midi_second(const std::span<const u8> buffer) {
-    return parse_midi_tick(buffer).to<tag::Second>();
-}
-
-vec<u8> dumps_midi_quarter(const Score<tag::Quarter>& score) {
-    return score.to<tag::Tick>().dumps<tag::Midi>();
-}
-
-vec<u8> dumps_midi_second(const Score<tag::Second>& score) {
-    return score.to<tag::Tick>().dumps<tag::Midi>();
-}
-
 // define some utils
 template<typename T>
 struct NoteOn: TimeStamp<T> {
@@ -253,11 +237,11 @@ inline Score<tag::Tick> parse_midi_tick(const std::span<const u8> buffer) {
             score.tracks.push_back(std::move(track));
         }
     }
-    ops::sort_branchless(score.time_signatures);
-    ops::sort_branchless(score.key_signatures);
-    ops::sort_branchless(score.tempos);
-    ops::sort_branchless(score.lyrics);
-    ops::sort_branchless(score.markers);
+    ops::sort_by_time(score.time_signatures);
+    ops::sort_by_time(score.key_signatures);
+    ops::sort_by_time(score.tempos);
+    ops::sort_by_time(score.lyrics);
+    ops::sort_by_time(score.markers);
     return score;
 } // parse_midi_tick
 
@@ -300,9 +284,9 @@ inline vec<u8> dumps_midi_tick(const Score<tag::Tick>& score) {
         for(const auto &marker: score.markers) {
             msgs.emplace_back(message::Message::Marker(marker.time, marker.text));
         }
-        ops::sort_branchless(msgs.begin(), msgs.end(), [](const auto &a, const auto &b) {
-            return a.get_time() < b.get_time();
-        });
+        // ops::sort_branchless(msgs.begin(), msgs.end(), [](const auto &a, const auto &b) {
+        //     return a.get_time() < b.get_time();
+        // });
         midi.tracks.emplace_back(std::move(msgs));
     }
 
@@ -344,5 +328,30 @@ inline vec<u8> dumps_midi_tick(const Score<tag::Tick>& score) {
     }
     return midi.to_bytes();
 } // dumps_midi_tick
+
+}
+
+namespace symusic::io {
+template<>
+Score<tag::Tick> parse<tag::Tick, tag::MIDI>(const std::span<const u8> buffer) {
+    return details::parse_midi_tick(buffer);
+}
+
+template<>
+Score<tag::Quarter> parse<tag::Quarter, tag::MIDI>(const std::span<const u8> buffer) {
+    const auto score = details::parse_midi_tick(buffer);
+    return convert<tag::Tick, tag::Quarter>(score);
+}
+
+template<>
+vec<u8> dumps<tag::Tick, tag::MIDI>(const Score<tag::Tick> & score) {
+    return details::dumps_midi_tick(score);
+}
+
+template<>
+vec<u8> dumps<tag::Quarter, tag::MIDI>(const Score<tag::Quarter> & score) {
+    const auto new_score = convert<tag::Quarter, tag::Tick>(score);
+    return details::dumps_midi_tick(new_score);
+}
 
 }

@@ -58,113 +58,114 @@ inline vec<u8> Score<tag::Second>::dumps<tag::Zpp>() const {
 
 // these serialize functions are forced to be writen in header to pass compilation
 // I don't know why
-namespace symusic {
-template<trait::TType T> // Note
-constexpr auto serialize(auto &archive, Note<T> &self) {
+namespace zpp::bits {
+// namespace symusic {
+template<symusic::trait::TType T> // Note
+constexpr auto serialize(auto &archive, symusic::Note<T> &self) {
     return archive(self.time, self.duration, self.pitch, self.velocity);
 }
 
-template<trait::TType T> // Pedal
-constexpr auto serialize(auto &archive, Pedal<T> &self) {
+template<symusic::trait::TType T> // Pedal
+constexpr auto serialize(auto &archive, symusic::Pedal<T> &self) {
     return archive(self.time, self.duration);
 }
 
-template<trait::TType T> // ControlChange
-constexpr auto serialize(auto &archive, ControlChange<T> &self) {
+template<symusic::trait::TType T> // ControlChange
+constexpr auto serialize(auto &archive, symusic::ControlChange<T> &self) {
     return archive(self.time, self.number, self.value);
 }
 
-template<trait::TType T> // TimeSignature
-constexpr auto serialize(auto &archive, TimeSignature<T> &self) {
+template<symusic::trait::TType T> // TimeSignature
+constexpr auto serialize(auto &archive, symusic::TimeSignature<T> &self) {
     return archive(self.time, self.numerator, self.denominator);
 }
 
-template<trait::TType T> // KeySignature
-constexpr auto serialize(auto &archive, KeySignature<T> &self) {
+template<symusic::trait::TType T> // KeySignature
+constexpr auto serialize(auto &archive, symusic::KeySignature<T> &self) {
     return archive(self.time, self.key, self.tonality);
 }
 
-template<trait::TType T> // Tempo
-constexpr auto serialize(auto &archive, Tempo<T> &self) {
+template<symusic::trait::TType T> // Tempo
+constexpr auto serialize(auto &archive, symusic::Tempo<T> &self) {
     return archive(self.time, self.qpm);
 }
 
-template<trait::TType T> // PitchBend
-constexpr auto serialize(auto &archive, PitchBend<T> &self) {
+template<symusic::trait::TType T> // PitchBend
+constexpr auto serialize(auto &archive, symusic::PitchBend<T> &self) {
     return archive(self.time, self.value);
 }
 
-template<trait::TType T> // TextMeta
-constexpr auto serialize(auto &archive, TextMeta<T> &self) {
+template<symusic::trait::TType T> // TextMeta
+constexpr auto serialize(auto &archive, symusic::TextMeta<T> &self) {
     return archive(self.time, self.text);
 }
 
-template<trait::TType T> // Track
-constexpr auto serialize(auto &archive, Track<T> &self) {
+template<symusic::trait::TType T> // Track
+constexpr auto serialize(auto &archive, symusic::Track<T> &self) {
     return archive(
         self.name, self.program,self.is_drum,
         self.notes, self.controls, self.pitch_bends, self.pedals
     );
 }
 
-template<trait::TType T> // Score
-constexpr auto serialize(auto &archive, Score<T> &self) {
+template<symusic::trait::TType T> // Score
+constexpr auto serialize(auto &archive, symusic::Score<T> &self) {
     return archive(
         self.ticks_per_quarter, self.tracks,
         self.time_signatures, self.key_signatures,
         self.tempos, self.lyrics, self.markers
     );
 }
-template<trait::TType T> // Note
-constexpr auto serialize(auto &archive,const Note<T> &self) {
+template<symusic::trait::TType T> // Note
+constexpr auto serialize(auto &archive,const symusic::Note<T> &self) {
     return archive(self.time, self.duration, self.pitch, self.velocity);
 }
 
-template<trait::TType T> // Pedal
-constexpr auto serialize(auto &archive,const Pedal<T> &self) {
+template<symusic::trait::TType T> // Pedal
+constexpr auto serialize(auto &archive,const symusic::Pedal<T> &self) {
     return archive(self.time, self.duration);
 }
 
-template<trait::TType T> // ControlChange
-constexpr auto serialize(auto &archive,const ControlChange<T> &self) {
+template<symusic::trait::TType T> // ControlChange
+constexpr auto serialize(auto &archive,const symusic::ControlChange<T> &self) {
     return archive(self.time, self.number, self.value);
 }
 
-template<trait::TType T> // TimeSignature
-constexpr auto serialize(auto &archive,const TimeSignature<T> &self) {
+template<symusic::trait::TType T> // TimeSignature
+constexpr auto serialize(auto &archive,const symusic::TimeSignature<T> &self) {
     return archive(self.time, self.numerator, self.denominator);
 }
 
-template<trait::TType T> // KeySignature
-constexpr auto serialize(auto &archive,const KeySignature<T> &self) {
+template<symusic::trait::TType T> // KeySignature
+constexpr auto serialize(auto &archive,const symusic::KeySignature<T> &self) {
     return archive(self.time, self.key, self.tonality);
 }
 
-template<trait::TType T> // Tempo
-constexpr auto serialize(auto &archive,const Tempo<T> &self) {
+template<symusic::trait::TType T> // Tempo
+constexpr auto serialize(auto &archive,const symusic::Tempo<T> &self) {
     return archive(self.time, self.qpm);
 }
 
-template<trait::TType T> // PitchBend
-constexpr auto serialize(auto &archive,const PitchBend<T> &self) {
+template<symusic::trait::TType T> // PitchBend
+constexpr auto serialize(auto &archive,const symusic::PitchBend<T> &self) {
     return archive(self.time, self.value);
 }
 
-template<trait::TType T> // TextMeta
-constexpr auto serialize(auto &archive,const TextMeta<T> &self) {
+template<symusic::trait::TType T> // TextMeta
+constexpr auto serialize(auto &archive,const symusic::TextMeta<T> &self) {
     return archive(self.time, self.text);
 }
 
-template<trait::TType T> // Track
-constexpr auto serialize(auto &archive,const Track<T> &self) {
+template<symusic::trait::TType T> // Track
+constexpr auto serialize(auto &archive,const symusic::Track<T> &self) {
     return archive(
         self.name, self.program,self.is_drum,
         self.notes, self.controls, self.pitch_bends, self.pedals
     );
 }
 
-template<trait::TType T> // Score
-constexpr auto serialize(auto &archive,const Score<T> &self) {
+template<symusic::trait::TType T> // Score
+constexpr auto serialize(auto &archive,const symusic::Score<T> &self) {
     return archive(
         self.ticks_per_quarter, self.tracks,
         self.time_signatures, self.key_signatures,

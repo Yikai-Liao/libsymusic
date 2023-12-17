@@ -5,7 +5,7 @@
 #include "symusic/utils.h"
 
 namespace symusic::details {
-inline std::string strip_non_utf_8(const std::string & str) {
+std::string strip_non_utf_8(const std::string & str) {
     const size_t f_size = str.size();
     std::string to;
     to.reserve(f_size);

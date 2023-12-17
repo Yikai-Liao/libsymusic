@@ -3,7 +3,8 @@
 //
 #include <stdexcept>
 #include <limits>
-#include "symusic/container.h"
+#include "symusic/inner/container.h"
+#include "MetaMacro.h"
 
 namespace symusic {
 

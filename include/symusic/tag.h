@@ -21,10 +21,13 @@ struct Quarter: TimeUnit<f32> {};
 
 struct Second: TimeUnit<f32> {};
 
-template<typename T>
-struct FormatTag{ typedef T format; };
+struct FormatTag{};
 
-struct Empty {};
+struct MIDI: FormatTag{};
+
+struct XML: FormatTag{};
+
+struct ZPP: FormatTag{};
 
 } // namespace tag
 
@@ -34,7 +37,7 @@ template<typename T>
 concept TType = std::is_base_of_v<tag::TimeUnit<typename T::unit>, T>;
 
 template<typename T>
-concept Format = std::is_base_of_v<tag::FormatTag<typename T::format>, T>;
+concept Format = std::is_base_of_v<tag::FormatTag, T>;
 
 }   // namespace trait
 
@@ -44,6 +47,10 @@ struct TimeStamp {
     typedef T ttype;
     typedef typename T::unit unit;
     unit time;
+
+    TimeStamp() = default;
+    TimeStamp(const TimeStamp &) = default;
+    explicit TimeStamp(const unit &time) : time(time) {};
 };
 
 namespace trait {

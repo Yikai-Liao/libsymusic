@@ -6,12 +6,16 @@
 #include <sstream>
 #include "nanobench.h"
 #include "symusic.h"
+// #include "symusic/container.h"
 #include "fmt/core.h"
 
 using namespace symusic;
 
 int main(){
     fmt::print("{}, {}\n", "Hello", "world");
+    Score<tag::Tick> s(0);
+    fmt::print("Note num {}\n", s.note_num());
+    // auto t = s.dumps<tag::Midi>();
 
     // bench sstream and fmt::format
     ankerl::nanobench::Bench().run("sstream", []{
