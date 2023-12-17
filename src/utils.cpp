@@ -1,7 +1,7 @@
 //
 // Created by lyk on 23-12-16.
 //
-#include "symusic/alias.h"
+#include "symusic/mtype.h"
 #include "symusic/utils.h"
 
 namespace symusic::details {

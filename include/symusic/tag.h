@@ -5,7 +5,7 @@
 #ifndef LIBSYMUSIC_TAG_H
 #define LIBSYMUSIC_TAG_H
 
-#include "symusic/alias.h"
+#include "symusic/mtype.h"
 
 namespace symusic {
 
