@@ -18,6 +18,7 @@ typedef uint32_t    u32;
 typedef int32_t     i32;
 typedef float       f32;
 typedef double      f64;
+using size_t = std::size_t;
 
 template<typename T>
 using vec = std::vector<T>;
