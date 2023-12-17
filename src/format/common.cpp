@@ -25,7 +25,6 @@ void write_file(const std::filesystem::path& path, const std::span<const u8> buf
     if(!file) { throw std::runtime_error("File not found"); }
     fwrite(buffer.data(), 1, buffer.size(), file);
     fclose(file);
-
 }
 
 }

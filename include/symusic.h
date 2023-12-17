@@ -11,6 +11,6 @@
 #include "symusic/conversion.h"
 
 #include "symusic/format/midi.h"
-// #include "symusic/format/zpp.h"
+#include "symusic/format/zpp.h"
 
 #endif //LIBSYMUSIC_SYMUSIC_H

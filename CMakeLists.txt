@@ -11,9 +11,8 @@ add_library(libsymusic SHARED
         src/container.cpp
         src/format/common.cpp
         src/format/midi.cpp
-#        src/format/zpp.cpp
+        src/format/zpp.cpp
         src/utils.cpp
-#        src/batch_ops.cpp
         src/conversion.cpp
 )
 target_include_directories(libsymusic PUBLIC ./include)

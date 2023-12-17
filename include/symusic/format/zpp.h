@@ -5,172 +5,44 @@
 #ifndef LIBSYMUSIC_ZPP_H
 #define LIBSYMUSIC_ZPP_H
 
-#include "symusic/format/common.h"
-#include "symusic/container.h"
-#include "zpp_bits.h"
+#include "symusic/inner/zpp.h"
+#include "symusic/inner/io.h"
 
-namespace symusic {
-namespace tag {
-// set a none type
-struct Zpp: FormatTag<Empty>{};
+namespace symusic::io {
+
+#define INSTANTIATE_ZPP(__COUNT, NAME)                                                 \
+    extern template vec<u8> serailize_zpp(const NAME<tag::Tick> & data);               \
+    extern template vec<u8> serailize_zpp(const NAME<tag::Quarter> & data);            \
+    extern template vec<u8> serailize_zpp(const NAME<tag::Second> & data);             \
+    extern template NAME<tag::Tick> deserailize_zpp(std::span<const u8> buffer);       \
+    extern template NAME<tag::Quarter> deserailize_zpp(std::span<const u8> buffer);    \
+    extern template NAME<tag::Second> deserailize_zpp(std::span<const u8> buffer);
+
+REPEAT_ON(
+    INSTANTIATE_ZPP,
+    Note,
+    Pedal,
+    ControlChange,
+    TimeSignature,
+    KeySignature,
+    Tempo,
+    PitchBend,
+    TextMeta,
+    NoteArray,
+    Track,
+    Score
+)
+
+#undef INSTANTIATE_ZPP
+
+// extern parse and dumps
+#define INSTANTIATE_ZPP(__COUNT, TAG)                                                       \
+    extern template vec<u8> dumps<tag::TAG, tag::ZPP>(const Score<tag::TAG> & score);       \
+    extern template Score<tag::TAG> parse<tag::TAG, tag::ZPP>(std::span<const u8> buffer);
+
+REPEAT_ON(INSTANTIATE_ZPP, Tick, Quarter, Second)
+
+#undef INSTANTIATE_ZPP
 }
 
-namespace details {
-template<trait::TType T>
-Score<T> parse_zpp(std::span<const u8> buffer);
-
-template<trait::TType T>
-vec<u8> dumps_zpp(const Score<T> &score);
-}
-
-template<> template<>
-inline Score<tag::Tick> Score<tag::Tick>::from<tag::Zpp>(const std::span<const u8> buffer) {
-    return details::parse_zpp<tag::Tick>(buffer);
-}
-
-template<> template<>
-inline Score<tag::Quarter> Score<tag::Quarter>::from<tag::Zpp>(const std::span<const u8> buffer) {
-    return details::parse_zpp<tag::Quarter>(buffer);
-}
-
-template<> template<>
-inline Score<tag::Second> Score<tag::Second>::from<tag::Zpp>(const std::span<const u8> buffer) {
-    return details::parse_zpp<tag::Second>(buffer);
-}
-
-template<> template<>
-inline vec<u8> Score<tag::Tick>::dumps<tag::Zpp>() const {
-    return details::dumps_zpp(*this);
-}
-
-template<> template<>
-inline vec<u8> Score<tag::Quarter>::dumps<tag::Zpp>() const {
-    return details::dumps_zpp(*this);
-}
-
-template<> template<>
-inline vec<u8> Score<tag::Second>::dumps<tag::Zpp>() const {
-    return details::dumps_zpp(*this);
-}
-
-}  // symusic
-
-
-// these serialize functions are forced to be writen in header to pass compilation
-// I don't know why
-namespace zpp::bits {
-// namespace symusic {
-template<symusic::trait::TType T> // Note
-constexpr auto serialize(auto &archive, symusic::Note<T> &self) {
-    return archive(self.time, self.duration, self.pitch, self.velocity);
-}
-
-template<symusic::trait::TType T> // Pedal
-constexpr auto serialize(auto &archive, symusic::Pedal<T> &self) {
-    return archive(self.time, self.duration);
-}
-
-template<symusic::trait::TType T> // ControlChange
-constexpr auto serialize(auto &archive, symusic::ControlChange<T> &self) {
-    return archive(self.time, self.number, self.value);
-}
-
-template<symusic::trait::TType T> // TimeSignature
-constexpr auto serialize(auto &archive, symusic::TimeSignature<T> &self) {
-    return archive(self.time, self.numerator, self.denominator);
-}
-
-template<symusic::trait::TType T> // KeySignature
-constexpr auto serialize(auto &archive, symusic::KeySignature<T> &self) {
-    return archive(self.time, self.key, self.tonality);
-}
-
-template<symusic::trait::TType T> // Tempo
-constexpr auto serialize(auto &archive, symusic::Tempo<T> &self) {
-    return archive(self.time, self.qpm);
-}
-
-template<symusic::trait::TType T> // PitchBend
-constexpr auto serialize(auto &archive, symusic::PitchBend<T> &self) {
-    return archive(self.time, self.value);
-}
-
-template<symusic::trait::TType T> // TextMeta
-constexpr auto serialize(auto &archive, symusic::TextMeta<T> &self) {
-    return archive(self.time, self.text);
-}
-
-template<symusic::trait::TType T> // Track
-constexpr auto serialize(auto &archive, symusic::Track<T> &self) {
-    return archive(
-        self.name, self.program,self.is_drum,
-        self.notes, self.controls, self.pitch_bends, self.pedals
-    );
-}
-
-template<symusic::trait::TType T> // Score
-constexpr auto serialize(auto &archive, symusic::Score<T> &self) {
-    return archive(
-        self.ticks_per_quarter, self.tracks,
-        self.time_signatures, self.key_signatures,
-        self.tempos, self.lyrics, self.markers
-    );
-}
-template<symusic::trait::TType T> // Note
-constexpr auto serialize(auto &archive,const symusic::Note<T> &self) {
-    return archive(self.time, self.duration, self.pitch, self.velocity);
-}
-
-template<symusic::trait::TType T> // Pedal
-constexpr auto serialize(auto &archive,const symusic::Pedal<T> &self) {
-    return archive(self.time, self.duration);
-}
-
-template<symusic::trait::TType T> // ControlChange
-constexpr auto serialize(auto &archive,const symusic::ControlChange<T> &self) {
-    return archive(self.time, self.number, self.value);
-}
-
-template<symusic::trait::TType T> // TimeSignature
-constexpr auto serialize(auto &archive,const symusic::TimeSignature<T> &self) {
-    return archive(self.time, self.numerator, self.denominator);
-}
-
-template<symusic::trait::TType T> // KeySignature
-constexpr auto serialize(auto &archive,const symusic::KeySignature<T> &self) {
-    return archive(self.time, self.key, self.tonality);
-}
-
-template<symusic::trait::TType T> // Tempo
-constexpr auto serialize(auto &archive,const symusic::Tempo<T> &self) {
-    return archive(self.time, self.qpm);
-}
-
-template<symusic::trait::TType T> // PitchBend
-constexpr auto serialize(auto &archive,const symusic::PitchBend<T> &self) {
-    return archive(self.time, self.value);
-}
-
-template<symusic::trait::TType T> // TextMeta
-constexpr auto serialize(auto &archive,const symusic::TextMeta<T> &self) {
-    return archive(self.time, self.text);
-}
-
-template<symusic::trait::TType T> // Track
-constexpr auto serialize(auto &archive,const symusic::Track<T> &self) {
-    return archive(
-        self.name, self.program,self.is_drum,
-        self.notes, self.controls, self.pitch_bends, self.pedals
-    );
-}
-
-template<symusic::trait::TType T> // Score
-constexpr auto serialize(auto &archive,const symusic::Score<T> &self) {
-    return archive(
-        self.ticks_per_quarter, self.tracks,
-        self.time_signatures, self.key_signatures,
-        self.tempos, self.lyrics, self.markers
-    );
-}
-}
 #endif //LIBSYMUSIC_ZPP_H
