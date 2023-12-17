@@ -6,8 +6,8 @@
 #define LIBSYMUSIC_CONTAINER_H
 
 #include <string>
-#include <filesystem>
-#include <span>
+// #include <filesystem>
+// #include <span>
 #include "symusic/tag.h"
 
 namespace symusic {
@@ -24,11 +24,7 @@ namespace symusic {
 #define BASIC_TIMESTAMP_METHODS(EVENT, T)                       \
     COMPILER_DEFAULT_METHODS(EVENT)                             \
     typedef T ttype;                                            \
-    typedef typename T::unit unit;                              \
-    bool operator==(const EVENT & other) const;                 \
-    [[nodiscard]] inline std::string to_string() const;         \
-    inline EVENT& shift_time_inplace(unit offset);              \
-    [[nodiscard]] inline EVENT shift_time(unit offset) const;   \
+    typedef typename T::unit unit;
 
 /*
  *  List of all the events (based on TimeStamp):
@@ -51,18 +47,8 @@ struct Note: TimeStamp<T> {
     Note(const unit time, const unit duration, const i8 pitch, const i8 velocity):
         TimeStamp<T>{time}, duration{duration}, pitch{pitch}, velocity{velocity} {}
 
-    template<class U>
-    Note(const unit time, const unit duration, const Note<U> & other):
-        TimeStamp<T>{time}, duration{duration}, pitch{other.pitch}, velocity{other.velocity} {}
-
-    [[nodiscard]] unit start() const;
-    [[nodiscard]] unit end() const;
-
-    Note& shift_pitch_inplace(i8 offset);
-    Note& shift_velocity_inplace(i8 offset);
-
-    Note shift_pitch(i8 offset) const;
-    [[nodiscard]] Note shift_velocity(i8 offset) const;
+    [[nodiscard]] unit start() const { return this->time; }
+    [[nodiscard]] unit end() const { return this->time + duration; }
 };
 
 template<trait::TType T>
@@ -73,12 +59,8 @@ struct Pedal: TimeStamp<T> {
     Pedal(const unit time, const unit duration):
         TimeStamp<T>{time}, duration{duration} {}
 
-    template<class U>
-    Pedal(const unit time, const unit duration, const Pedal<U> & other):
-        TimeStamp<T>{time}, duration{duration} {}
-
-    [[nodiscard]] unit start();
-    [[nodiscard]] unit end();
+    [[nodiscard]] unit start() const { return this->time; }
+    [[nodiscard]] unit end() const { return this->time + duration; }
 
 };
 
@@ -89,10 +71,6 @@ struct ControlChange: TimeStamp<T> {
 
     ControlChange(const unit time, const u8 number, const u8 value):
         TimeStamp<T>{time}, number{number}, value{value} {}
-
-    template<class U>
-    ControlChange(const unit time, const ControlChange<U> & other):
-        TimeStamp<T>{time}, number{other.number}, value{other.value} {}
 };
 
 template<trait::TType T>
@@ -102,10 +80,6 @@ struct TimeSignature: TimeStamp<T> {
 
     TimeSignature(const unit time, const u8 numerator, const u8 denominator):
         TimeStamp<T>{time}, numerator{numerator}, denominator{denominator} {}
-
-    template<class U>
-    TimeSignature(const unit time, const TimeSignature<U> & other):
-        TimeStamp<T>{time}, numerator{other.numerator}, denominator{other.denominator} {}
 };
 
 template<trait::TType T>
@@ -116,11 +90,7 @@ struct KeySignature: TimeStamp<T> {
     KeySignature(const unit time, const i8 key, const i8 tonality):
         TimeStamp<T>{time}, key{key}, tonality{tonality} {}
 
-    template<class U>
-    KeySignature(const unit time, const KeySignature<U> & other):
-        TimeStamp<T>{time}, key{other.key}, tonality{other.tonality} {}
-
-    [[nodiscard]] u8 degree() const;
+    [[nodiscard]] u8 degree() const { return (key * 5) % 12 + tonality * 12; }
 };
 
 template<trait::TType T>
@@ -128,12 +98,7 @@ struct Tempo: TimeStamp<T> {
     BASIC_TIMESTAMP_METHODS(Tempo, T);
     f32 qpm{120};
 
-    Tempo(const unit time, const f32 qpm):
-        TimeStamp<T>{time}, qpm{qpm} {}
-
-    template<class U>
-    Tempo(const unit time, const Tempo<U> & other):
-        TimeStamp<T>{time}, qpm{other.qpm} {}
+    Tempo(const unit time, const f32 qpm): TimeStamp<T>{time}, qpm{qpm} {}
 };
 
 template<trait::TType T>
@@ -141,25 +106,15 @@ struct PitchBend: TimeStamp<T> {
     BASIC_TIMESTAMP_METHODS(PitchBend, T);
     i32 value{0};
 
-    PitchBend(const unit time, const i32 value):
-        TimeStamp<T>{time}, value{value} {}
-
-    template<class U>
-    PitchBend(const unit time, const PitchBend<U> & other):
-        TimeStamp<T>{time}, value{other.value} {}
+    PitchBend(const unit time, const i32 value): TimeStamp<T>{time}, value{value} {}
 };
 
 template<trait::TType T>
 struct TextMeta: TimeStamp<T> {
     BASIC_TIMESTAMP_METHODS(TextMeta, T);
-    std::string text;
+    std::string text{};
 
-    TextMeta(const unit time, std::string  text):
-        TimeStamp<T>{time}, text{std::move(text)} {}
-
-    template<class U>
-    TextMeta(const unit time, const TextMeta<U> & other):
-        TimeStamp<T>{time}, text{other.text} {}
+    TextMeta(const unit time, std::string  text): TimeStamp<T>{time}, text{std::move(text)} {}
 };
 
 #undef BASIC_TIMESTAMP_METHODS
@@ -193,12 +148,11 @@ struct NoteArray {
     [[nodiscard]] unit end() const;
     [[nodiscard]] size_t note_num() const;
     [[nodiscard]] bool empty() const;
-    [[nodiscard]] std::string to_string() const;
 
-    NoteArray& sort_inplace(bool reverse = false);
-    [[nodiscard]] NoteArray sort(bool reverse = false) const;
-
-    [[nodiscard]] NoteArray clip(unit start, unit end, bool clip_end = false) const;
+    // NoteArray& sort_inplace(bool reverse = false);
+    // [[nodiscard]] NoteArray sort(bool reverse = false) const;
+    //
+    // [[nodiscard]] NoteArray clip(unit start, unit end, bool clip_end = false) const;
 };
 
 template<trait::TType T>
@@ -230,12 +184,12 @@ struct Track {
     [[nodiscard]] unit end() const;
     [[nodiscard]] size_t note_num() const;
     [[nodiscard]] bool empty() const;
-    [[nodiscard]] std::string to_string() const;
+    // [[nodiscard]] std::string to_string() const;
 
-    Track& sort_inplace(bool reverse = false);
-    [[nodiscard]] Track sort(bool reverse = false) const;
-
-    [[nodiscard]] Track clip(unit start, unit end, bool clip_end = false) const;
+    // Track& sort_inplace(bool reverse = false);
+    // [[nodiscard]] Track sort(bool reverse = false) const;
+    //
+    // [[nodiscard]] Track clip(unit start, unit end, bool clip_end = false) const;
 };
 
 template<trait::TType T>
@@ -244,11 +198,11 @@ struct Score {
     typedef typename T::unit unit;
 
     i32 ticks_per_quarter{};
-    vec<Track<T>> tracks;
-    vec<TimeSignature<T>> time_signatures;
-    vec<KeySignature<T>> key_signatures;
-    vec<Tempo<T>> tempos;
-    vec<TextMeta<T>> lyrics, markers;
+    vec<Track<T>> tracks{};
+    vec<TimeSignature<T>> time_signatures{};
+    vec<KeySignature<T>> key_signatures{};
+    vec<Tempo<T>> tempos{};
+    vec<TextMeta<T>> lyrics, markers{};
 
     COMPILER_DEFAULT_METHODS(Score);
 
@@ -259,37 +213,60 @@ struct Score {
         const vec<TimeSignature<T>> & time_signatures,
         const vec<KeySignature<T>> & key_signatures,
         const vec<Tempo<T>> & tempos,
-        const vec<Tempo<T>> & lyrics,
-        const vec<Tempo<T>> & markers
+        const vec<TextMeta<T>> & lyrics,
+        const vec<TextMeta<T>> & markers
     ):  ticks_per_quarter{tpq}, tracks{tracks}, time_signatures{time_signatures},
         key_signatures{key_signatures}, tempos{tempos}, lyrics{lyrics}, markers{markers} {}
 
-    template<trait::TType U>    // from other score
-    static Score from(const Score<U> & other);
-
-    template<trait::TType U>
-    Score<U> to() const;
-
-    template<trait::Format U>   // from path(file)
-    static Score from(const std::filesystem::path & path);
-
-    template<trait::Format U>
-    void dump(const std::filesystem::path & path) const;
-
-    template<trait::Format U>   // from buffer
-    static Score from(std::span<const u8> buffer);
-
-    template<trait::Format U>
-    vec<u8> dumps() const;
+    // template<trait::TType U>    // from other score
+    // static Score from(const Score<U> & other);
+    //
+    // template<trait::TType U>
+    // Score<U> to() const;
+    //
+    // template<trait::Format U>   // from path(file)
+    // static Score from(const std::filesystem::path & path);
+    //
+    // template<trait::Format U>
+    // void dump(const std::filesystem::path & path) const;
+    //
+    // template<trait::Format U>   // from buffer
+    // static Score from(std::span<const u8> buffer);
+    //
+    // template<trait::Format U>
+    // vec<u8> dumps() const;
 
     [[nodiscard]] unit start() const;
     [[nodiscard]] unit end() const;
+    [[nodiscard]] size_t note_num() const;
     [[nodiscard]] size_t track_num() const;
     [[nodiscard]] bool empty() const;
-    [[nodiscard]] std::string to_string() const;
 };
 
 #undef COMPILER_DEFAULT_METHODS
 
+#define EXTERN_TEMPLATE(_COUNT, T)          \
+    extern template struct T<tag::Tick>;    \
+    extern template struct T<tag::Quarter>; \
+    extern template struct T<tag::Second>;
+
+#include "MetaMacro.h"
+
+REPEAT_ON(
+    EXTERN_TEMPLATE,
+    Note,
+    Pedal,
+    ControlChange,
+    TimeSignature,
+    KeySignature,
+    Tempo,
+    PitchBend,
+    TextMeta,
+    NoteArray,
+    Track,
+    Score
+)
+
+#undef EXTERN_TEMPLATE
 }   // namespace symusic
 #endif //LIBSYMUSIC_CONTAINER_H
