@@ -5,6 +5,10 @@
 #include <stdexcept>
 #include "symusic/inner/io.h"
 
+#ifdef _MSC_VER
+#pragma warning(disable:4996)
+#endif
+
 namespace symusic::io {
 
 vec<u8> read_file(const std::filesystem::path& path) {

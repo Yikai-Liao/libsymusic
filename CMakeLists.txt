@@ -33,3 +33,10 @@ if(BUILD_TEST)
     add_executable(parse_midi example/parse_midi.cpp)
     target_link_libraries(parse_midi libsymusic)
 endif()
+
+# enable parallel compilation for MSVC
+if(MSVC)
+    add_compile_options($<$<CXX_COMPILER_ID:MSVC>:/Gm->)
+    cmake_host_system_information(RESULT CPU_NUMBER_OF_LOGICAL_CORES QUERY NUMBER_OF_LOGICAL_CORES)
+    add_compile_options($<$<CXX_COMPILER_ID:MSVC>:/MP${CPU_NUMBER_OF_LOGICAL_CORES}>)
+endif()

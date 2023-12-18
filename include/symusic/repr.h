@@ -9,12 +9,15 @@
 #include "symusic/container.h"
 #include "fmt/core.h"
 #include "fmt/ranges.h"
+#include "MetaMacro.h"
 
 // define fmt::formatter for symusic::Note
 // support different format for Note
 // :d for details Note(time=0.22, duration=0.51, pitch=65, velocity=0.5)
 // :s for short Note(0.22, 0.51, 65, 0.5)
 // if nothing, use short format, i.e. "{}" is the same as "{:s}"
+// Traditional MSVC requires a special EXPAND phase
+
 
 namespace symusic::details {
     struct BaseParser{};
@@ -38,8 +41,8 @@ struct formatter<symusic::details::BaseParser> {
     }
 };
 
-#define FORMATTER(                                                                  \
-    STRUCT_NAME, ARG_NAME, DETAIL_FORMAT, SHORT_FORMAT, ...)            \
+#define INNER_FORMATTER(                                                            \
+    STRUCT_NAME, ARG_NAME, DETAIL_FORMAT, SHORT_FORMAT, ...)                        \
     template<symusic::trait::TType T>                                               \
     struct formatter<symusic::STRUCT_NAME<T>>:                                      \
         formatter<symusic::details::BaseParser> {                                   \
@@ -53,6 +56,9 @@ struct formatter<symusic::details::BaseParser> {
         }                                                                           \
     };
 
+// this is to make msvc work
+#define HELPER(X) X
+#define FORMATTER(...) HELPER(INNER_FORMATTER(__VA_ARGS__))
 
 FORMATTER(
     Note, d,
