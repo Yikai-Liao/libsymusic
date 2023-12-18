@@ -5,19 +5,15 @@
 #define LIBSYMUSIC_REPR_H
 
 // for ostream
-#include <iosfwd>
 #include "symusic/container.h"
 #include "fmt/core.h"
 #include "fmt/ranges.h"
-#include "MetaMacro.h"
 
 // define fmt::formatter for symusic::Note
 // support different format for Note
 // :d for details Note(time=0.22, duration=0.51, pitch=65, velocity=0.5)
 // :s for short Note(0.22, 0.51, 65, 0.5)
 // if nothing, use short format, i.e. "{}" is the same as "{:s}"
-// Traditional MSVC requires a special EXPAND phase
-
 
 namespace symusic::details {
     struct BaseParser{};
