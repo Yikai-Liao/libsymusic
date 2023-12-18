@@ -13,7 +13,10 @@ int main(const int argc, char ** argv) {
     // convert to filesystem::path
     const std::filesystem::path path = filename;
     const auto score = symusic::io::parse<symusic::tag::Tick, symusic::tag::MIDI>(path);
-    fmt::print("note_num: {}\n", score.note_num());
+    fmt::print("{}\n", score);
+    const auto & t = score.tracks[0];
+    fmt::print("{}\n", t);
+    fmt::print("{}\n", std::span(t.notes.begin(), t.notes.begin() + 5));
     symusic::io::dump<symusic::tag::Tick, symusic::tag::MIDI>(score, "tmp.mid");
     return 0;
 }
