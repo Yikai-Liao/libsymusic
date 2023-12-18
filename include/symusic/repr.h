@@ -116,6 +116,8 @@ FORMATTER(
     d.time, d.text
 )
 #undef FORMATTER
+#undef INNER_FORMATTER
+#undef HELPER
 }
 // define a base formatter with parse that
 #endif //LIBSYMUSIC_REPR_H
