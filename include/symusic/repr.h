@@ -6,6 +6,8 @@
 
 // for ostream
 #include "symusic/container.h"
+#include <string>
+#include <iosfwd>
 #include "fmt/core.h"
 #include "fmt/ranges.h"
 
@@ -115,5 +117,22 @@ FORMATTER(
 #undef INNER_FORMATTER
 #undef HELPER
 }
+
+#define OSTREAMEABLE(__COUNT, STRUCT_NAME)                                              \
+    template<symusic::trait::TType T>                                                   \
+    std::ostream &operator<<(std::ostream &os, const symusic::STRUCT_NAME<T> &data){    \
+        return os << fmt::format("{:d}", data);                                         \
+    }                                                                                   \
+    namespace symusic {                                                                 \
+    template<trait::TType T>                                                            \
+    std::string to_string (const symusic::STRUCT_NAME<T> &data){                        \
+        return fmt::format("{:d}", data);                                               \
+    }}
+
+REPEAT_ON(
+    OSTREAMEABLE,
+    Note, Pedal, ControlChange, TimeSignature, KeySignature, Tempo, PitchBend, TextMeta
+)
+#undef OSTREAMEABLE
 // define a base formatter with parse that
 #endif //LIBSYMUSIC_REPR_H

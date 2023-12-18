@@ -13,6 +13,8 @@ using namespace symusic;
 int main(){
     fmt::print("{}, {}\n", "Hello", "world");
     fmt::print("{0:d}, {0:s}\n", TextMeta<tag::Quarter>(0.12, "Hello, world"));
+    std::cout << Note<tag::Tick>(1,2,3,4) << std::endl;
+    std::cout << to_string(TextMeta<tag::Quarter>(0.12, "Hello, world")) << std::endl;
 
     // bench sstream and fmt::format
     ankerl::nanobench::Bench().run("sstream", []{
