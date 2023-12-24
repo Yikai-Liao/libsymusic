@@ -2,8 +2,8 @@
 // Created by lyk on 23-12-13.
 //
 
-#ifndef LIBSYMUSIC_ALIAS_H
-#define LIBSYMUSIC_ALIAS_H
+#ifndef LIBSYMUSIC_MTYPE_H
+#define LIBSYMUSIC_MTYPE_H
 
 #include <cstdint>
 #include <vector>
@@ -26,4 +26,4 @@ using vec = std::vector<T>;
 }
 
 
-#endif //LIBSYMUSIC_ALIAS_H
+#endif //LIBSYMUSIC_MTYPE_H

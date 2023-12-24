@@ -4,18 +4,25 @@
 
 #ifndef LIBSYMUSIC_CONVERSION_H
 #define LIBSYMUSIC_CONVERSION_H
-#include "symusic/inner/conversion.h"
+
+#include "symusic/time_unit.h"
+#include "symusic/track.h"
+#include "symusic/score.h"
+#include "symusic/note_arr.h"
+
 namespace symusic {
-extern template Score<tag::Tick> convert<tag::Tick, tag::Tick>(const Score<tag::Tick> & score);
-extern template Score<tag::Tick> convert<tag::Quarter, tag::Tick>(const Score<tag::Quarter> & score);
-// extern template Score<tag::Tick> convert<tag::Second, tag::Tick>(const Score<tag::Second> & score);
 
-extern template Score<tag::Quarter> convert<tag::Tick, tag::Quarter>(const Score<tag::Tick> & score);
-extern template Score<tag::Quarter> convert<tag::Quarter, tag::Quarter>(const Score<tag::Quarter> & score);
-// extern template Score<tag::Quarter> convert<tag::Second, tag::Quarter>(const Score<tag::Second> & score);
+template< TType To, TType From>
+Score<To> convert(const Score<From> & score);
 
-// extern template Score<tag::Second> convert<tag::Tick, tag::Second>(const Score<tag::Tick> & score);
-// extern template Score<tag::Second> convert<tag::Quarter, tag::Second>(const Score<tag::Quarter> & score);
-extern template Score<tag::Second> convert<tag::Second, tag::Second>(const Score<tag::Second> & score);
+template<TType From>
+Score<Tick> convert(const Score<From> & score, Tick::unit min_dir);
+
+template<TType T>
+NoteArr<T> to_note_arr(const Track<T> & track);
+
+template<TType T>
+Track<T> to_track(const NoteArr<T> & note_arr);
+
 }
 #endif //LIBSYMUSIC_CONVERSION_H

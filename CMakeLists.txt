@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 20)
 option(BUILD_TEST "Build the test target" ON)
 
 add_subdirectory(3rdparty/fmt EXCLUDE_FROM_ALL)
+include_directories(include)
 
 # create library target: libsymusic
 add_library(libsymusic STATIC

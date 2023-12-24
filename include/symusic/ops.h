@@ -5,14 +5,12 @@
 #ifndef LIBSYMUSIC_BATCH_OPS_H
 #define LIBSYMUSIC_BATCH_OPS_H
 
-#include <functional>
-#include "symusic/tag.h"
+#include "symusic/event.h"
 #include "pdqsort.h"
 #include "algorithm"
 
 namespace symusic::ops {
 
-// cmp function
 template<typename T, class Compare>
 void sort_branchless(vec<T> & data, Compare cmp){
     pdqsort_branchless(data.begin(), data.end(), cmp);
@@ -53,14 +51,14 @@ vec<T> filter(const vec<T>& data, FILTER t_fiter) {
     return new_data;
 }
 
-template<trait::TimeEvent T> // used for general events, with time
+template<TimeEvent T> // used for general events, with time
 vec<T> clip(const vec<T>& events, typename T::unit start, typename T::unit end) {
     auto func = [start, end](const T &event) {
         return ((event.time) >= start) && ((event.time) < end);
     };  return filter(events, func);
 }
 
-template<trait::TimeEvent T> // used for events with duration (e.g. Note and Pedal)
+template<TimeEvent T> // used for events with duration (e.g. Note and Pedal)
 vec<T> clip(const vec<T>& events, typename T::unit start, typename T::unit end, const bool clip_end) {
     if (clip_end) {
         auto func = [start, end](const T &event) {
