@@ -24,19 +24,34 @@ target_include_directories(libsymusic PUBLIC  ./3rdparty/pdqsort)
 target_include_directories(libsymusic PUBLIC  ./3rdparty/minimidi/include)
 target_include_directories(libsymusic PUBLIC  ./3rdparty/zpp_bits)
 
+include(CheckIPOSupported)
+check_ipo_supported(RESULT ipo_supported OUTPUT ipo_error)
+
+if(ipo_supported)
+    message(STATUS "IPO / LTO enabled")
+    set_property(TARGET libsymusic PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
+else()
+    message(STATUS "IPO / LTO not supported: <${error}>")
+endif()
+
+
+
 if(BUILD_TEST)
+    message(STATUS "Building test target")
+
     add_subdirectory(3rdparty/nanobench EXCLUDE_FROM_ALL)
 
     add_executable(hello example/hello.cpp)
     target_link_libraries(hello libsymusic)
     target_link_libraries(hello nanobench)
 
-    add_executable(parse_midi example/parse_midi.cpp)
-    target_link_libraries(parse_midi libsymusic)
+#    add_executable(parse_midi example/parse_midi.cpp)
+#    target_link_libraries(parse_midi libsymusic)
 endif()
 
 # enable parallel compilation for MSVC
 if(MSVC)
+    message(STATUS "MSVC parallel compilation enabled")
     add_compile_options($<$<CXX_COMPILER_ID:MSVC>:/Gm->)
     cmake_host_system_information(RESULT CPU_NUMBER_OF_LOGICAL_CORES QUERY NUMBER_OF_LOGICAL_CORES)
     add_compile_options($<$<CXX_COMPILER_ID:MSVC>:/MP${CPU_NUMBER_OF_LOGICAL_CORES}>)
