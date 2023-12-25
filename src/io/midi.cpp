@@ -6,6 +6,10 @@
 #include <map>
 #include <queue>
 
+#ifdef _MSC_VER
+#pragma warning(disable:4996)
+#endif
+
 #include "MiniMidi.hpp"
 
 #include "symusic/score.h"

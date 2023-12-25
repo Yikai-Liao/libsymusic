@@ -5,7 +5,7 @@
 #define LIBSYMUSIC_REPR_H
 
 #include <string>
-#include <iosfwd>
+#include <iostream>
 
 #include "fmt/core.h"
 #include "fmt/ranges.h"

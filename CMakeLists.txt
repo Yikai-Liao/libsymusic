@@ -38,7 +38,7 @@ if (ENABLE_LTO)
         message(STATUS "Link-time optimization (LTO) enabled")
         set_property(TARGET libsymusic PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
     else()
-        message(WARNING "Link-time optimization (LTO) is not supported: ${lto_check_output}")
+        message(WARNING "Link-time optimization (LTO) is not supported: \n${lto_check_output}")
     endif()
 endif()
 
