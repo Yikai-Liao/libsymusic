@@ -66,6 +66,7 @@ struct NoteArr {
     [[nodiscard]] size_t note_num() const;
 
     // return true if the NoteArr is empty
+    // Note that empty does not guarantee valid
     [[nodiscard]] bool empty() const;
 
     // return true if the NoteArr is valid, i.e. get the same size for all the arrays
@@ -80,12 +81,13 @@ struct NoteArr {
     // non-inplace sort, return a new NoteArr
     [[nodiscard]] NoteArr sort(bool reverse = false);
 
-    // inplace sort, and return self reference
-    NoteArr& sort_inplace(bool reverse = false);
-
     // Clip all the events in the NoteArr, non-inplace, return a new NoteArr
     // clip_end is used to determine whether to clip based on end time.
     [[nodiscard]] NoteArr clip(unit start, unit end, bool clip_end = false) const;
+
+    void reserve(size_t size);
+
+    void emplace_back(unit time, unit duration, i8 pitch, i8 velocity);
 };
 
 template<TType T> template<DataFormat>
