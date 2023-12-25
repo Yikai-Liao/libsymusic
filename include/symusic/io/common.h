@@ -7,20 +7,19 @@
 
 #include <string>
 #include <filesystem>
+#include <span>
+
+#include "symusic/mtype.h"
 
 namespace symusic {
 
 vec<u8> read_file(const std::filesystem::path & path);
 
-inline vec<u8> read_file(const std::string & path) {
-    return read_file(std::filesystem::path(path));
-}
+vec<u8> read_file(const std::string & path);
 
 void write_file(const std::filesystem::path & path, std::span<const u8> buffer);
 
-inline void write_file(const std::string & path, std::span<const u8> buffer) {
-    write_file(std::filesystem::path(path), buffer);
-}
+void write_file(const std::string & path, std::span<const u8> buffer);
 
 }
 
