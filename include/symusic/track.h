@@ -61,7 +61,7 @@ struct Track {
     // return true if the track is empty
     [[nodiscard]] bool empty() const;
 
-    // return a string representation of the track
+    // return a string representation of the track, same as summary
     [[nodiscard]] std::string to_string() const;
 
     // summary info of the track

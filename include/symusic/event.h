@@ -27,6 +27,7 @@ namespace symusic {
     COMPILER_DEFAULT_METHODS(EVENT)                             \
     typedef T ttype;                                            \
     typedef typename T::unit unit;                              \
+    [[nodiscard]] std::string to_string() const;                \
     template<DataFormat F>                                      \
     [[nodiscard]] static EVENT parse(std::span<const u8> bytes);\
     template<DataFormat F>                                      \

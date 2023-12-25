@@ -21,6 +21,8 @@
 // :s for short Note(0.22, 0.51, 65, 0.5)
 // if nothing, use short format, i.e. "{}" is the same as "{:s}"
 
+namespace symusic::details {struct BaseParser{};}
+
 namespace fmt {
 
 #define TAG_FORMAT(__COUNT, NAME)                                                   \
@@ -63,41 +65,6 @@ struct formatter<symusic::DataFormat> {
         }
     }
 };
-
-}
-
-namespace symusic {
-template<TType T>
-std::string sumary(const Track<T> &track) {
-    return fmt::format(
-        "Track(ttype={}, program={}, is_drum={}, name={}, notes={})",
-        T(), track.program, track.is_drum, track.name, track.notes.size()
-    );
-}
-
-template<TType T>
-std::string sumary(const NoteArr<T> &note_array) {
-    return fmt::format(
-        "NoteArray(ttype={}, program={}, is_drum={}, name={}, notes={})",
-        T(), note_array.program, note_array.is_drum, note_array.name, note_array.note_num()
-    );
-}
-
-template<TType T>
-std::string sumary(const Score<T> &score) {
-    return fmt::format(
-        "Score(ttype={}, tpq={}, begin={}, end={}, tracks={}, notes={}, time_sig={}, key_sig={}, markers={}, lyrics={})",
-        T(), score.ticks_per_quarter, score.start(), score.end(), score.tracks.size(), score.note_num(),
-        score.time_signatures.size(), score.key_signatures.size(), score.markers.size(), score.lyrics.size()
-    );
-}
-
-namespace details {struct BaseParser{};
-}
-
-}
-
-namespace fmt {
 
 template<>
 struct formatter<symusic::details::BaseParser> {
@@ -202,31 +169,14 @@ FORMATTER(
 #undef INNER_FORMATTER
 #undef HELPER
 
-#define SUMMARY_FORMAT(__COUNT, NAME)                                                   \
-    template<symusic::TType T>                                                          \
-    struct formatter<symusic::NAME<T>> {                                                \
-        constexpr auto parse(const format_parse_context &ctx) { return ctx.begin(); }   \
-        template<typename FmtCtx>                                                       \
-        auto format(const symusic::NAME<T> & data, FmtCtx &ctx) const {                 \
-            return fmt::format_to(ctx.out(), "{}", symusic::sumary(data));              \
-        }                                                                               \
-    };
-
-REPEAT_ON(SUMMARY_FORMAT, Track, NoteArr, Score)
-
-#undef SUMMARY_FORMAT
+// #undef SUMMARY_FORMAT
 }
+
+// Declare ostream operator for all the classes and corresponding vectors
 
 #define OSTREAMEABLE(__COUNT, STRUCT_NAME)                                              \
     template<symusic::TType T>                                                          \
-    std::ostream &operator<<(std::ostream &os, const symusic::STRUCT_NAME<T> &data){    \
-        return os << fmt::format("{:d}", data);                                         \
-    }                                                                                   \
-    namespace symusic {                                                                 \
-    template<TType T>                                                                   \
-    std::string to_string (const symusic::STRUCT_NAME<T> &data){                        \
-        return fmt::format("{:d}", data);                                               \
-    }}
+    std::ostream &operator<<(std::ostream &os, const symusic::STRUCT_NAME<T> &data);
 
 REPEAT_ON(
     OSTREAMEABLE,
@@ -237,34 +187,19 @@ REPEAT_ON(
     KeySignature,
     Tempo,
     PitchBend,
-    TextMeta
+    TextMeta,
+    Track,
+    Score,
+    NoteArr
 )
-#undef OSTREAMEABLE
-
-#define OSTREAMEABLE(__COUNT, STRUCT_NAME)                                              \
-    template<symusic::TType T>                                                          \
-    std::ostream &operator<<(std::ostream &os, const symusic::STRUCT_NAME<T> &data){    \
-        return os << fmt::format("{}", data);                                           \
-    }                                                                                   \
-    namespace symusic {                                                                 \
-    template<TType T>                                                                   \
-    std::string to_string (const symusic::STRUCT_NAME<T> &data){                        \
-        return fmt::format("{}", data);                                                 \
-    }}
-
-REPEAT_ON( OSTREAMEABLE, Track, NoteArr, Score)
 #undef OSTREAMEABLE
 
 #define OSTREAMEABLE(__COUNT, STRUCT_NAME)                                              \
     template<symusic::TType T>                                                          \
     std::ostream &operator<<(                                                           \
         std::ostream &os, const std::vector<symusic::STRUCT_NAME<T>> &data              \
-    ) { return os << fmt::format("{}", data); }                                         \
-    namespace symusic {                                                                 \
-    template<TType T>                                                                   \
-    std::string to_string (const std::vector<symusic::STRUCT_NAME<T>> &data){           \
-        return fmt::format("{}", data);                                                 \
-    }}
+    ) { return os << fmt::format("{}", data); }
+
 
 REPEAT_ON(
     OSTREAMEABLE,

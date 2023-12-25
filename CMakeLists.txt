@@ -2,20 +2,22 @@ cmake_minimum_required(VERSION 3.20)
 project(libsymusic)
 set(CMAKE_CXX_STANDARD 20)
 
+# show compiler name and version
+message(STATUS "Compiler: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
+
 option(BUILD_TEST "Build the test target" ON)
 
 add_subdirectory(3rdparty/fmt EXCLUDE_FROM_ALL)
 include_directories(include)
 
 # create library target: libsymusic
-add_library(libsymusic STATIC
-        src/container.cpp
-        src/format/common.cpp
-        src/format/midi.cpp
-        src/format/zpp.cpp
-        src/utils.cpp
-        src/conversion.cpp
-)
+file(GLOB_RECURSE libsymusic_src src/*.cpp src/format/*.cpp)
+
+foreach(src_file ${libsymusic_src})
+    message(STATUS "libsymusic_src: ${src_file}")
+endforeach()
+
+add_library(libsymusic STATIC ${libsymusic_src})
 target_include_directories(libsymusic PUBLIC ./include)
 # expose headers
 # link to 3rdparty

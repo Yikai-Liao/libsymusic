@@ -63,7 +63,7 @@ struct Score {
     // return true if the score is empty
     [[nodiscard]] bool empty() const;
 
-    // return a string representation of the score
+    // return a string representation of the score, same as summary
     [[nodiscard]] std::string to_string() const;
 
     // summary info of the score

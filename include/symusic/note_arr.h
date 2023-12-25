@@ -71,7 +71,7 @@ struct NoteArr {
     // return true if the NoteArr is valid, i.e. get the same size for all the arrays
     [[nodiscard]] bool valid() const;
 
-    // return a string representation of the NoteArr
+    // return a string representation of the NoteArr, same as summary
     [[nodiscard]] std::string to_string() const;
 
     // summary info of the NoteArr
