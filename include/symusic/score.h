@@ -48,8 +48,6 @@ struct Score {
     template<DataFormat F>
     [[nodiscard]] vec<u8> dumps() const;
 
-    [[nodiscard]] Score<Tick> resample(i32 tpq, i32 min_dur = 0);
-
     // return the start time of the score
     [[nodiscard]] unit start() const;
 

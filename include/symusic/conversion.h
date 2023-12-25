@@ -24,5 +24,8 @@ NoteArr<T> to_note_arr(const Track<T> & track);
 template<TType T>
 Track<T> to_track(const NoteArr<T> & note_arr);
 
+template<TType T>
+Score<Tick> resample(const Score<T> & score, i32 tpq, Tick::unit min_dur = 0);
+
 }
 #endif //LIBSYMUSIC_CONVERSION_H

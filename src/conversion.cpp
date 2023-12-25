@@ -118,4 +118,55 @@ REPEAT_ON(INSTANTIATE, Tick, Quarter, Second)
 
 #undef INSTANTIATE
 
+// Resample Score<Tick> to Score<Tick> with given new tpq and min_dur
+template<>
+Score<Tick> resample(const Score<Tick> & score, const i32 tpq, const i32 min_dur) {
+    Score<Tick> ans(tpq);
+
+#define CONVERT_TIME(VALUE) \
+static_cast<i32>(std::round(static_cast<double>(tpq * VALUE) / static_cast<double>(score.ticks_per_quarter)))
+
+#define RESAMPLE_GENERAL(__COUNT, VEC)                      \
+    ans.VEC.reserve(score.VEC.size());                      \
+    for(const auto &item: score.VEC)                        \
+        ans.VEC.emplace_back(CONVERT_TIME(item.time), item);
+
+#define RESAMPLE_DUR(__COUNT, VEC)                          \
+    ans.VEC.reserve(score.VEC.size());                      \
+    for(const auto &item: score.VEC)                        \
+        ans.VEC.emplace_back(                               \
+            CONVERT_TIME(item.time),                        \
+            std::max(                                       \
+                CONVERT_TIME(item.duration), min_dur        \
+            ), item                                         \
+        );
+
+    REPEAT_ON(RESAMPLE_GENERAL, time_signatures, key_signatures, tempos, lyrics, markers)
+    const size_t track_num = score.tracks.size();
+    ans.tracks = vec<Track<Tick>>(track_num);
+    for(size_t i = 0; i < track_num; ++i) {
+        const auto &track = score.tracks[i];
+        auto &new_track = ans.tracks[i];
+        new_track.name = track.name;
+        new_track.program = track.program;
+        new_track.is_drum = track.is_drum;
+        REPEAT_ON(RESAMPLE_DUR, tracks[i].notes, tracks[i].pedals)
+        REPEAT_ON(RESAMPLE_GENERAL, tracks[i].controls, tracks[i].pitch_bends)
+    }
+
+#undef CONVERT_TIME
+#undef RESAMPLE_GENERAL
+#undef RESAMPLE_DUR
+
+    return ans;
+}
+
+template<TType T> requires (!std::is_same_v<T, Tick>)
+Score<Tick> resample(const Score<T> & score, const i32 tpq, const i32 min_dur) {
+    return resample(convert<Tick>(score), tpq, min_dur);
+}
+
+template Score<Tick> resample(const Score<Quarter> & score, i32 tpq, i32 min_dur);
+// template Score<Tick> resample(const Score<Second> & score, i32 tpq, i32 min_dur);
+
 } // namespace symusic
