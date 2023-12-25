@@ -93,7 +93,7 @@ NoteArr<T> NoteArr<T>::clip(const unit start, const unit end, const bool clip_en
     if (empty()) return {};
 
     std::function<bool(size_t)> check_end;
-    if constexpr (clip_end) check_end = [end, this](size_t i) {return time[i] + duration[i] <= end;};
+    if (clip_end) check_end = [end, this](size_t i) {return time[i] + duration[i] <= end;};
     else check_end = [end, this](size_t i) {return time[i] <= end;};
 
     NoteArr new_arr;

@@ -64,11 +64,24 @@ Score<T> Score<T>::sort(const bool reverse) const {
     return copy().sort_inplace(reverse);
 }
 
+// #define EXTERN_TRACK_CLIP(__COUNT, T)   \
+//     extern template Track<T> Track<T>::clip(typename T::unit start, typename T::unit end, bool clip_end) const;
+//
+// REPEAT_ON(EXTERN_TRACK_CLIP, Tick, Quarter, Second)
+//
+// #undef EXTERN_TRACK_CLIP
+
 template<TType T>
 Score<T> Score<T>::clip(unit start, unit end, bool clip_end) const {
+    vec<Track<T>> new_tracks;
+    new_tracks.reserve(track_num());
+    for(const auto & track: tracks) {
+        new_tracks.emplace_back(track.clip(start, end, clip_end));
+    }
+
     return {
         ticks_per_quarter,
-        std::move(tracks.clip(start, end, clip_end)),
+        std::move(new_tracks),
         std::move(ops::clip(time_signatures, start, end)),
         std::move(ops::clip(key_signatures, start, end)),
         std::move(ops::clip(tempos, start, end)),

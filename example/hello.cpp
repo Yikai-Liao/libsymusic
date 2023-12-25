@@ -4,17 +4,22 @@
 
 #include <string>
 #include <sstream>
+#include <iostream>
 #include "nanobench.h"
-#include "symusic.h"
 #include "fmt/core.h"
+
+#include "symusic.h"
 
 using namespace symusic;
 
+extern template std::string TextMeta<Quarter>::to_string() const;
+
+
 int main(){
     fmt::print("{}, {}\n", "Hello", "world");
-    fmt::print("{0:d}, {0:s}\n", TextMeta<tag::Quarter>(0.142, "Hello, world"));
-    std::cout << Note<tag::Tick>(1,2,3,4) << std::endl;
-    std::cout << to_string(TextMeta<tag::Quarter>(0.312, "Hello, world")) << std::endl;
+    fmt::print("{0:d}, {0:s}\n", TextMeta<Quarter>(0.142, "Hello, world"));
+    std::cout << Note<Tick>(1,2,3,4) << std::endl;
+    std::cout << TextMeta<Quarter>(0.312, "Hello, world").to_string() << std::endl;
 
     // bench sstream and fmt::format
     ankerl::nanobench::Bench().run("sstream", []{

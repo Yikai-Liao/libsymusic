@@ -57,8 +57,12 @@ Track<T> Track<T>::clip(unit start, unit end, bool clip_end) const {
     };
 }
 
-#define INSTANTIATE_TRACK(__COUNT, T) template struct Track<T>;
+#define INSTANTIATE_TRACK(__COUNT, T)   \
+    template struct Track<T>;
+    // template Track<T> Track<T>::clip(typename T::unit start, typename T::unit end, bool clip_end) const;
+
 REPEAT_ON(INSTANTIATE_TRACK, Tick, Quarter, Second)
+
 #undef INSTANTIATE_TRACK
 
 }

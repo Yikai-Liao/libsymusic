@@ -14,9 +14,9 @@
 namespace symusic::ops {
 
 template<typename T>
-void sort_by_time(vec<T> & data, const bool reverse) {
+void sort_by_time(vec<T> & data, const bool reverse = false) {
     std::function<bool(const T&, const T &)> cmp;
-    if constexpr (reverse) {
+    if (reverse) {
         cmp = [](const T & a, const T & b) {return (a.time) > (b.time);};
     } else {
         cmp = [](const T & a, const T & b) {return (a.time) < (b.time);};

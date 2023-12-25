@@ -147,9 +147,9 @@ FORMATTER(
 
 FORMATTER(
     Tempo, d,
-    "Tempo(time={}, qpm={})",
-    "Tempo({}, {})",
-    fix_float(d.time), d.qpm
+    "Tempo(time={}, qpm={}, mspq={})",
+    "Tempo({}, {}, {})",
+    fix_float(d.time), d.qpm(), d.mspq
 )
 
 FORMATTER(
@@ -194,26 +194,26 @@ REPEAT_ON(
 )
 #undef OSTREAMEABLE
 
-#define OSTREAMEABLE(__COUNT, STRUCT_NAME)                                              \
-    template<symusic::TType T>                                                          \
-    std::ostream &operator<<(                                                           \
-        std::ostream &os, const std::vector<symusic::STRUCT_NAME<T>> &data              \
-    ) { return os << fmt::format("{}", data); }
-
-
-REPEAT_ON(
-    OSTREAMEABLE,
-    Note,
-    Pedal,
-    ControlChange,
-    TimeSignature,
-    KeySignature,
-    Tempo,
-    PitchBend,
-    TextMeta,
-    Track
-)
-#undef OSTREAMEABLE
+// #define OSTREAMEABLE(__COUNT, STRUCT_NAME)                                              \
+//     template<symusic::TType T>                                                          \
+//     std::ostream &operator<<(                                                           \
+//         std::ostream &os, const std::vector<symusic::STRUCT_NAME<T>> &data              \
+//     ) { return os << fmt::format("{}", data); }
+//
+//
+// REPEAT_ON(
+//     OSTREAMEABLE,
+//     Note,
+//     Pedal,
+//     ControlChange,
+//     TimeSignature,
+//     KeySignature,
+//     Tempo,
+//     PitchBend,
+//     TextMeta,
+//     Track
+// )
+// #undef OSTREAMEABLE
 
 // define a base formatter with parse that
 #endif //LIBSYMUSIC_REPR_H

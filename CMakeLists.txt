@@ -2,10 +2,11 @@ cmake_minimum_required(VERSION 3.20)
 project(libsymusic)
 set(CMAKE_CXX_STANDARD 20)
 
+option(BUILD_TEST "Build the test target" ON)
+option(ENABLE_LTO "Enables link-time optimization, requires compiler support." ON)
+
 # show compiler name and version
 message(STATUS "Compiler: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
-
-option(BUILD_TEST "Build the test target" ON)
 
 add_subdirectory(3rdparty/fmt EXCLUDE_FROM_ALL)
 include_directories(include)
@@ -26,16 +27,20 @@ target_include_directories(libsymusic PUBLIC  ./3rdparty/pdqsort)
 target_include_directories(libsymusic PUBLIC  ./3rdparty/minimidi/include)
 target_include_directories(libsymusic PUBLIC  ./3rdparty/zpp_bits)
 
-include(CheckIPOSupported)
-check_ipo_supported(RESULT ipo_supported OUTPUT ipo_error)
-
-if(ipo_supported)
-    message(STATUS "IPO / LTO enabled")
-    set_property(TARGET libsymusic PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
-else()
-    message(STATUS "IPO / LTO not supported: <${error}>")
+if (ENABLE_LTO)
+    include(CheckIPOSupported)
+    check_ipo_supported(RESULT has_lto OUTPUT lto_check_output)
+    if(has_lto)
+        if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+            message(STATUS "Clang detected, use -fuse-ld=gold")
+            set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fuse-ld=lld")
+        endif ()
+        message(STATUS "Link-time optimization (LTO) enabled")
+        set_property(TARGET libsymusic PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
+    else()
+        message(WARNING "Link-time optimization (LTO) is not supported: ${lto_check_output}")
+    endif()
 endif()
-
 
 
 if(BUILD_TEST)

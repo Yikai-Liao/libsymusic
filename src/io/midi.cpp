@@ -126,9 +126,9 @@ requires (std::is_same_v<T, Tick> || std::is_same_v<T, Quarter>)
     namespace message = minimidi::message; // alias
     for(const auto &midi_track: midi.tracks) {
         // (channel, program) -> Track
-        std::map<TrackIdx, Track<Tick>> track_map;
+        std::map<TrackIdx, Track<T>> track_map;
         // channel -> Track
-        Track<Tick> stragglers[16];
+        Track<T> stragglers[16];
         // channel -> program
         uint8_t cur_instr[16] = {0};
         std::string cur_name;
@@ -277,7 +277,7 @@ requires (std::is_same_v<T, Tick> || std::is_same_v<T, Quarter>)
             if (track.empty()) continue;
             track.name = cur_name;
             track.notes.shrink_to_fit();
-            score.tracks.push_back(std::move(track));
+            score.tracks.emplace_back(std::move(track));
         }
     }
     ops::sort_by_time(score.time_signatures);
@@ -363,7 +363,7 @@ minimidi::file::MidiFile to_midi(const Score<Tick> & score) {
             ));
         }
         // add notes
-        vec notes {track.notes};
+        vec<Note<Tick>> notes {track.notes};
         ops::sort(notes.begin(), notes.end(), [](const auto &a, const auto &b) {
             return std::tie(a.time, a.duration) < std::tie(b.time, b.duration);
         });
