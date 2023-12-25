@@ -64,6 +64,19 @@ Score<T> Score<T>::sort(const bool reverse) const {
     return copy().sort_inplace(reverse);
 }
 
+template<TType T>
+Score<T> Score<T>::clip(unit start, unit end, bool clip_end) const {
+    return {
+        ticks_per_quarter,
+        std::move(tracks.clip(start, end, clip_end)),
+        std::move(ops::clip(time_signatures, start, end)),
+        std::move(ops::clip(key_signatures, start, end)),
+        std::move(ops::clip(tempos, start, end)),
+        std::move(ops::clip(lyrics, start, end)),
+        std::move(ops::clip(markers, start, end))
+    };
+}
+
 #define INSTANTIATE_SCORE(__COUNT, T) template struct Score<T>;
 REPEAT_ON(INSTANTIATE_SCORE, Tick, Quarter, Second)
 #undef INSTANTIATE_SCORE
