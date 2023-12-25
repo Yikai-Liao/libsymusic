@@ -70,10 +70,18 @@ void NoteArr<T>::reserve(size_t size) {
 
 template<TType T>
 void NoteArr<T>::emplace_back(unit time, unit duration, i8 pitch, i8 velocity) {
-    this->time.emplace_back(time);
-    this->duration.emplace_back(duration);
+    this->time.push_back(time);
+    this->duration.push_back(duration);
     this->pitch.emplace_back(pitch);
     this->velocity.emplace_back(velocity);
+}
+
+template<TType T>
+void NoteArr<T>::push_back(const Note<T> & note) {
+    this->time.push_back(note.time);
+    this->duration.push_back(note.duration);
+    this->pitch.emplace_back(note.pitch);
+    this->velocity.emplace_back(note.velocity);
 }
 
 template<TType T>
@@ -96,4 +104,9 @@ NoteArr<T> NoteArr<T>::clip(const unit start, const unit end, const bool clip_en
         }
     }   return new_arr;
 }
+
+#define INSTANTIATE(__COUNT, T) template struct NoteArr<T>;
+REPEAT_ON(INSTANTIATE, Tick, Quarter, Second)
+#undef INSTANTIATE
+
 } // namespace symusic

@@ -11,6 +11,7 @@
 #include "symusic/mtype.h"
 #include "symusic/io/iodef.h"
 #include "symusic/time_unit.h"
+#include "symusic/event.h"
 
 namespace symusic {
 
@@ -38,10 +39,9 @@ struct NoteArr {
     NoteArr &operator=(const NoteArr &) = default;
 
     NoteArr(
-        std::string name, const u8 program, const bool is_drum,
-        const vec<unit> &time, const vec<unit> &duration, const size_t note_num = 0
+        std::string name, const u8 program, const bool is_drum, const size_t note_num = 0
     ) : name{std::move(name)}, program{program}, is_drum{is_drum},
-        time{time}, duration{duration}, pitch(note_num), velocity(note_num) {}
+        time{note_num}, duration{note_num}, pitch(note_num), velocity(note_num) {}
 
     NoteArr(
         std::string name, const u8 program, const bool is_drum,
@@ -88,6 +88,8 @@ struct NoteArr {
     void reserve(size_t size);
 
     void emplace_back(unit time, unit duration, i8 pitch, i8 velocity);
+
+    void push_back(const Note<T> & note);
 };
 
 template<TType T> template<DataFormat>
