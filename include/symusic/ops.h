@@ -5,37 +5,33 @@
 #ifndef LIBSYMUSIC_BATCH_OPS_H
 #define LIBSYMUSIC_BATCH_OPS_H
 
+#include <functional>
+
 #include "symusic/event.h"
 #include "pdqsort.h"
-#include "algorithm"
+// #include "algorithm"
 
 namespace symusic::ops {
 
-template<typename T, class Compare>
-void sort_branchless(vec<T> & data, Compare cmp){
-    pdqsort_branchless(data.begin(), data.end(), cmp);
-}
-
 template<typename T>
-void sort_by_time(vec<T> & data) {
-    std::sort(data.begin(), data.end(),
-        [](const T & a, const T & b) {return (a.time) < (b.time);}
-    );
-}
-
-template<class Iter, class Compare>
-void sort_branchless(Iter begin, Iter end, Compare cmp) {
-    pdqsort_branchless(begin, end, cmp);
-}
-
-template<typename T, class Compare>
-void sort(vec<T>& data, Compare cmp){
-    pdqsort(data.begin(), data.end(), cmp);
+void sort_by_time(vec<T> & data, const bool reverse) {
+    std::function<bool(const T&, const T &)> cmp;
+    if constexpr (reverse) {
+        cmp = [](const T & a, const T & b) {return (a.time) > (b.time);};
+    } else {
+        cmp = [](const T & a, const T & b) {return (a.time) < (b.time);};
+    }
+    pdqsort_branchless(data.begin(), data.end(), cmp);
 }
 
 template<class Iter, class Compare>
 void sort(Iter begin, Iter end, Compare cmp) {
-    pdqsort(begin, end, cmp);
+    pdqsort_branchless(begin, end, cmp);
+}
+
+template<typename T, class Compare>
+void sort(vec<T> & data, Compare cmp){
+    pdqsort_branchless(data.begin(), data.end(), cmp);
 }
 
 template<class T, class FILTER>

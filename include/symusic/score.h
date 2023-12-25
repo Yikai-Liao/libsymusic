@@ -70,7 +70,7 @@ struct Score {
     [[nodiscard]] std::string summary() const;
 
     // non-inplace sort, return a new score
-    [[nodiscard]] Score sort(bool reverse = false);
+    [[nodiscard]] Score sort(bool reverse = false) const;
 
     // inplace sort, and return self reference
     Score& sort_inplace(bool reverse = false);
