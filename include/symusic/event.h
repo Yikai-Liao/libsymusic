@@ -80,6 +80,8 @@ struct Note: TimeStamp<T> {
     [[nodiscard]] unit start() const { return this->time; }
     [[nodiscard]] unit end() const { return this->time + duration; }
 
+    [[nodiscard]] bool empty const { return duration <= 0 || velocity <= 0; }
+
     Note shift_pitch(i8 offset) const;
     Note& shift_pitch_inplace(i8 offset);
 
