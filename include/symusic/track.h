@@ -31,6 +31,8 @@ struct Track {
     [[nodiscard]] Track copy() const { return {*this}; }
 
     Track& operator=(const Track &) = default;
+    bool operator==(const Track & other) const = default;
+    bool operator!=(const Track & other) const = default;
 
     Track(std::string name, const u8 program, const bool is_drum):
         name{std::move(name)}, program{program}, is_drum{is_drum} {}

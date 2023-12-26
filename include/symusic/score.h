@@ -27,6 +27,8 @@ struct Score {
     Score(const Score&) = default;
 
     Score& operator=(const Score&) = default;
+    bool operator==(const Score & other) const = default;
+    bool operator!=(const Score & other) const = default;
 
     [[nodiscard]] Score copy() const { return {*this}; }
 
