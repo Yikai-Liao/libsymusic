@@ -55,8 +55,7 @@ struct TimeStamp {
     typedef typename T::unit unit;
     unit time;
 
-    TimeStamp() = default;
-    TimeStamp(const TimeStamp &) = default;
+    COMPILER_DEFAULT_METHODS(TimeStamp)
     explicit TimeStamp(const unit &time) : time(time) {};
 };
 

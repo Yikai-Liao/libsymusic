@@ -16,11 +16,14 @@ extern template std::string TextMeta<Quarter>::to_string() const;
 
 
 int main(){
-    fmt::print("{}, {}\n", "Hello", "world");
-    fmt::print("{0:d}, {0:s}\n", TextMeta<Quarter>(0.142, "Hello, world"));
-    std::cout << Note<Tick>(1,2,3,4).shift_time_inplace(10) << std::endl;
-    std::cout << TextMeta<Quarter>(0.312, "Hello, world").to_string() << std::endl;
-
+    {
+        fmt::print("{}, {}\n", "Hello", "world");
+        fmt::print("{0:d}, {0:s}\n", TextMeta<Quarter>(0.142, "Hello, world"));
+        Note<Tick> note (1,2,3,4);
+        fmt::print("Note \"operator==\" test: {}\n", note==note.copy());
+        std::cout << note.shift_time_inplace(10) << std::endl;
+        std::cout << TextMeta<Quarter>(0.312, "Hello, world").to_string() << std::endl;
+    }
     // bench sstream and fmt::format
     ankerl::nanobench::Bench().run("sstream", []{
         for(int i = 0; i < 1000; i++) {
