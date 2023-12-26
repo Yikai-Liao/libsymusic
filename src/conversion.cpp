@@ -140,8 +140,7 @@ REPEAT_ON(INSTANTIATE, Tick, Quarter, Second)
 #undef INSTANTIATE
 
 // Resample Score<Tick> to Score<Tick> with given new tpq and min_dur
-template<>
-Score<Tick> resample(const Score<Tick> & score, const i32 tpq, const i32 min_dur) {
+Score<Tick> resample_inner(const Score<Tick> & score, const i32 tpq, const i32 min_dur) {
     Score<Tick> ans(tpq);
 
 #define CONVERT_TIME(VALUE) \
@@ -182,12 +181,14 @@ static_cast<i32>(std::round(static_cast<double>(tpq * VALUE) / static_cast<doubl
     return ans;
 }
 
-template<TType T> requires (!std::is_same_v<T, Tick>)
-Score<Tick> resample(const Score<T> & score, const i32 tpq, const i32 min_dur) {
-    return resample(convert<Tick>(score), tpq, min_dur);
+template<>
+Score<Tick> resample(const Score<Quarter> & score, const i32 tpq, const i32 min_dur) {
+    return resample_inner(convert<Tick>(score), tpq, min_dur);
 }
 
-template Score<Tick> resample(const Score<Quarter> & score, i32 tpq, i32 min_dur);
+template Score<Tick> resample(const Score<Tick> & score, i32 tpq, i32 min_dur) {
+    return resample_inner(score, tpq, min_dur);
+}
 // template Score<Tick> resample(const Score<Second> & score, i32 tpq, i32 min_dur);
 
 } // namespace symusic
