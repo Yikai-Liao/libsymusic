@@ -15,8 +15,8 @@ namespace symusic {
 template< TType To, TType From>
 Score<To> convert(const Score<From> & score);
 
-template<TType From>
-Score<Tick> convert(const Score<From> & score, Tick::unit min_dir);
+template< TType To, TType From>
+Score<To> convert(const Score<From> & score, typename To::unit min_dur);
 
 template<TType T>
 NoteArr<T> to_note_arr(const Track<T> & track);

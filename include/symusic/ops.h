@@ -62,6 +62,23 @@ vec<T> clip(const vec<T>& events, typename T::unit start, typename T::unit end, 
         };  return filter(events, func);
     }   return clip(events, start, end);
 }
+
+// make sure T has time and duration fields using requires
+template<TimeEvent T>
+requires requires(T t) {{ t.duration } -> std::convertible_to<typename T::unit>;}
+vec<T>& clamp_dur_inplace(vec<T>& events, typename T::unit min_dur, typename T::unit max_dur) {
+    for(auto &event : events) {
+        event.duration = std::clamp(event.duration, min_dur, max_dur);
+    }   return events;
 }
+
+template<TimeEvent T>
+requires requires(T t) {{ t.duration } -> std::convertible_to<typename T::unit>;}
+vec<T> clamp_dur(const vec<T>& events, typename T::unit min_dur, typename T::unit max_dur) {
+    vec<T> new_events(events);
+    return clamp_dur_inplace(new_events, min_dur, max_dur);
+}
+
+} // namespace symusic::ops
 
 #endif //LIBSYMUSIC_BATCH_OPS_H
