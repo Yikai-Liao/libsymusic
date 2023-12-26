@@ -31,7 +31,10 @@ namespace symusic {
     template<DataFormat F>                                      \
     [[nodiscard]] static EVENT parse(std::span<const u8> bytes);\
     template<DataFormat F>                                      \
-    [[nodiscard]] vec<u8> dumps() const;
+    [[nodiscard]] vec<u8> dumps() const;                        \
+    EVENT shift_time(unit offset) const;                        \
+    EVENT& shift_time_inplace(unit offset);
+
 
 /*
  *  List of all the events (based on TimeStamp):
@@ -76,6 +79,12 @@ struct Note: TimeStamp<T> {
 
     [[nodiscard]] unit start() const { return this->time; }
     [[nodiscard]] unit end() const { return this->time + duration; }
+
+    Note shift_pitch(i8 offset) const;
+    Note& shift_pitch_inplace(i8 offset);
+
+    Note shift_velocity(i8 offset) const;
+    Note& shift_velocity_inplace(i8 offset);
 };
 
 template<TType T>

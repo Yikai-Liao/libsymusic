@@ -83,6 +83,47 @@ Score<T> Score<T>::clip(unit start, unit end, bool clip_end) const {
     };
 }
 
+// time shift
+template<TType T>
+Score<T>& Score<T>::shift_time_inplace(const unit offset) {
+    for(auto &track: tracks) track.shift_time_inplace(offset);
+    for(auto &time_signature: time_signatures) time_signature.shift_time_inplace(offset);
+    for(auto &key_signature: key_signatures) key_signature.shift_time_inplace(offset);
+    for(auto &tempo: tempos) tempo.shift_time_inplace(offset);
+    for(auto &lyric: lyrics) lyric.shift_time_inplace(offset);
+    for(auto &marker: markers) marker.shift_time_inplace(offset);
+    return *this;
+}
+
+template<TType T>
+Score<T> Score<T>::shift_time(const unit offset) const {
+    return copy().shift_time_inplace(offset);
+}
+
+// pitch shift
+template<TType T>
+Score<T>& Score<T>::shift_pitch_inplace(const i8 offset) {
+    for(auto &track: tracks) track.shift_pitch_inplace(offset);
+    return *this;
+}
+
+template<TType T>
+Score<T> Score<T>::shift_pitch(const i8 offset) const {
+    return copy().shift_pitch_inplace(offset);
+}
+
+// velocity shift
+template<TType T>
+Score<T>& Score<T>::shift_velocity_inplace(const i8 offset) {
+    for(auto &track: tracks) track.shift_velocity_inplace(offset);
+    return *this;
+}
+
+template<TType T>
+Score<T> Score<T>::shift_velocity(const i8 offset) const {
+    return copy().shift_velocity_inplace(offset);
+}
+
 #define INSTANTIATE_SCORE(__COUNT, T) template struct Score<T>;
 REPEAT_ON(INSTANTIATE_SCORE, Tick, Quarter, Second)
 #undef INSTANTIATE_SCORE

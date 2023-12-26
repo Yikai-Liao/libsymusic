@@ -78,6 +78,24 @@ struct Score {
     // Clip all the events in the score, non-inplace, return a new Score
     // For events with duration, clip_end is used to determine whether to clip based on end time.
     [[nodiscard]] Score clip(unit start, unit end, bool clip_end = false) const;
+
+    // shift the time of all the events in the score, non-inplace, return a new Score
+    [[nodiscard]] Score shift_time(unit offset) const;
+
+    // shift the time of all the events in the score, inplace, return self reference
+    Score& shift_time_inplace(unit offset);
+
+    // shift the pitch of all notes in the score, non-inplace, return a new Score
+    [[nodiscard]] Score shift_pitch(i8 offset) const;
+
+    // shift the pitch of all notes in the score, inplace, return self reference
+    Score& shift_pitch_inplace(i8 offset);
+
+    // shift the velocity of all notes in the score, non-inplace, return a new Score
+    [[nodiscard]] Score shift_velocity(i8 offset) const;
+
+    // shift the velocity of all notes in the score, inplace, return self reference
+    Score& shift_velocity_inplace(i8 offset);
 };
 
 // "Not Implemented" Error at compile time for parse and dumps

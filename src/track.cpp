@@ -57,9 +57,43 @@ Track<T> Track<T>::clip(unit start, unit end, bool clip_end) const {
     };
 }
 
-#define INSTANTIATE_TRACK(__COUNT, T)   \
-    template struct Track<T>;
-    // template Track<T> Track<T>::clip(typename T::unit start, typename T::unit end, bool clip_end) const;
+template<TType T>
+Track<T>& Track<T>::shift_time_inplace(const unit offset) {
+    for(auto& note: notes) note.shift_time_inplace(offset);
+    for(auto& control: controls) control.shift_time_inplace(offset);
+    for(auto& pitch_bend: pitch_bends) pitch_bend.shift_time_inplace(offset);
+    for(auto& pedal: pedals) pedal.shift_time_inplace(offset);
+    return *this;
+}
+
+template<TType T>
+Track<T> Track<T>::shift_time(const unit offset) const {
+    return copy().shift_time_inplace(offset);
+}
+
+template<TType T>
+Track<T>& Track<T>::shift_pitch_inplace(const i8 offset) {
+    for(auto& note: notes) note.shift_pitch_inplace(offset);
+    return *this;
+}
+
+template<TType T>
+Track<T> Track<T>::shift_pitch(const i8 offset) const {
+    return copy().shift_pitch_inplace(offset);
+}
+
+template<TType T>
+Track<T>& Track<T>::shift_velocity_inplace(const i8 offset) {
+    for(auto& note: notes) note.shift_velocity_inplace(offset);
+    return *this;
+}
+
+template<TType T>
+Track<T> Track<T>::shift_velocity(const i8 offset) const {
+    return copy().shift_velocity_inplace(offset);
+}
+
+#define INSTANTIATE_TRACK(__COUNT, T) template struct Track<T>;
 
 REPEAT_ON(INSTANTIATE_TRACK, Tick, Quarter, Second)
 

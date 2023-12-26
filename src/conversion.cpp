@@ -186,7 +186,8 @@ Score<Tick> resample(const Score<Quarter> & score, const i32 tpq, const i32 min_
     return resample_inner(convert<Tick>(score), tpq, min_dur);
 }
 
-template Score<Tick> resample(const Score<Tick> & score, i32 tpq, i32 min_dur) {
+template<>
+Score<Tick> resample(const Score<Tick> & score, i32 tpq, i32 min_dur) {
     return resample_inner(score, tpq, min_dur);
 }
 // template Score<Tick> resample(const Score<Second> & score, i32 tpq, i32 min_dur);
