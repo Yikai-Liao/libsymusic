@@ -4,6 +4,7 @@
 #include <cmath>
 
 #include "symusic/conversion.h"
+#include "symusic/ops.h"
 
 namespace symusic {
 
@@ -34,23 +35,8 @@ struct Quarter2Tick {
 
 #define HELPER_NAME(From, To) details::From##2##To
 
-#define CONVERT_VEC_TIME(Name, In, Out, Convert)        \
-    In.Name.reserve(Out.Name.size());                   \
-    for(const auto & d : In.Name) {                     \
-        In.Name.emplace_back(                           \
-            Convert(d.time), d);                        \
-    }
-
-#define CONVERT_VEC_TIME_DUR(Name, In, Out, Convert)    \
-    In.Name.reserve(Out.Name.size());                   \
-    for(const auto & d : In.Name) {                     \
-        In.Name.emplace_back(                           \
-            Convert(d.time), Convert(d.duration), d     \
-        );                                              \
-    }
-
-#define IMPLEMENT_CONVERT(To, From) \
-    template<> Score<To> convert<To, From> (const Score<From> & score) {    \
+#define IMPLEMENT_CONVERT(To, From)                                                             \
+    template<> Score<To> convert<To, From> (COMVERT_ARGUMENTS(To, From)) {                      \
         HELPER_NAME(From, To) helper(score);                                                    \
         Score<To> new_s(score.ticks_per_quarter);                                               \
         CONVERT_VEC_TIME(key_signatures, new_s, score, helper);                                 \
@@ -70,13 +56,48 @@ struct Quarter2Tick {
         return new_s;                                                                           \
     }
 
+#define COMVERT_ARGUMENTS(To, From)                     \
+    const Score<From> & score
+
+#define CONVERT_VEC_TIME(Name, In, Out, Convert)        \
+    In.Name.reserve(Out.Name.size());                   \
+    for(const auto & d : In.Name) {                     \
+        In.Name.emplace_back(                           \
+            Convert(d.time), d);                        \
+    }
+
+#define CONVERT_VEC_TIME_DUR(Name, In, Out, Convert)    \
+    In.Name.reserve(Out.Name.size());                   \
+    for(const auto & d : In.Name) {                     \
+        In.Name.emplace_back(                           \
+            Convert(d.time), Convert(d.duration), d     \
+        );                                              \
+    }
+
+//                To    From
+IMPLEMENT_CONVERT(Tick, Quarter)
+IMPLEMENT_CONVERT(Quarter, Tick)
+
+#undef COMVERT_ARGUMENTS
+#undef CONVERT_VEC_TIME_DUR
+
+#define COMVERT_ARGUMENTS(To, From)                     \
+    const Score<From> & score, typename To::unit min_dur
+
+#define CONVERT_VEC_TIME_DUR(Name, In, Out, Convert)    \
+    In.Name.reserve(Out.Name.size());                   \
+    for(const auto & d : In.Name) {                     \
+        In.Name.emplace_back(                           \
+            Convert(d.time),                            \
+            std::max(Convert(d.duration), min_dur), d   \
+        );                                              \
+    }
+
 //                To    From
 IMPLEMENT_CONVERT(Tick, Quarter)
 IMPLEMENT_CONVERT(Quarter, Tick)
 
 #undef IMPLEMENT_CONVERT
-#undef CONVERT_VEC_TIME_DUR
-#undef CONVERT_VEC_TIME
 #undef HELPER_NAME
 
 // Directly copy for the same type
