@@ -52,8 +52,8 @@ if(BUILD_TEST)
     target_link_libraries(hello libsymusic)
     target_link_libraries(hello nanobench)
 
-#    add_executable(parse_midi example/parse_midi.cpp)
-#    target_link_libraries(parse_midi libsymusic)
+    add_executable(parse_midi example/parse_midi.cpp)
+    target_link_libraries(parse_midi libsymusic)
 endif()
 
 # enable parallel compilation for MSVC
