@@ -106,7 +106,7 @@ template<> Score<Second> convert<Second, Second> (const Score<Second> & score) {
 
 #define CONVERT_VEC_TIME_DUR(Name, In, Out, Convert)    \
     In.Name.reserve(Out.Name.size());                   \
-    for(const auto & d : In.Name) {                     \
+    for(const auto & d : Out.Name) {                     \
         In.Name.emplace_back(                           \
             Convert(d.time),                            \
             MAX(Convert(d.duration), min_dur), d        \
