@@ -3,7 +3,7 @@ project(libsymusic)
 set(CMAKE_CXX_STANDARD 20)
 
 option(BUILD_TEST "Build the test target" ON)
-option(ENABLE_LTO "Enables link-time optimization, requires compiler support." ON)
+option(ENABLE_LTO "Enables link-time optimization, requires compiler support." OFF)
 
 # show compiler name and version
 message(STATUS "Compiler: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
@@ -12,7 +12,7 @@ add_subdirectory(3rdparty/fmt EXCLUDE_FROM_ALL)
 include_directories(include)
 
 # create library target: libsymusic
-file(GLOB_RECURSE libsymusic_src src/*.cpp src/format/*.cpp)
+file(GLOB_RECURSE libsymusic_src src/*.cpp src/io/*.cpp)
 
 foreach(src_file ${libsymusic_src})
     message(STATUS "libsymusic_src: ${src_file}")
@@ -22,7 +22,7 @@ add_library(libsymusic STATIC ${libsymusic_src})
 target_include_directories(libsymusic PUBLIC ./include)
 # expose headers
 # link to 3rdparty
-target_link_libraries(libsymusic PUBLIC fmt::fmt)
+target_link_libraries(libsymusic PUBLIC fmt::fmt-header-only)
 target_include_directories(libsymusic PUBLIC  ./3rdparty/pdqsort)
 target_include_directories(libsymusic PUBLIC  ./3rdparty/minimidi/include)
 target_include_directories(libsymusic PUBLIC  ./3rdparty/zpp_bits)

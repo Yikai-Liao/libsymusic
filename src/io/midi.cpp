@@ -341,7 +341,9 @@ minimidi::file::MidiFile to_midi(const Score<Tick> & score) {
             ));
         }
         // messages will be sorted by time in minimidi
-        midi.tracks.emplace_back(std::move(msgs));
+        if(!msgs.empty()) {
+            midi.tracks.emplace_back(std::move(msgs));
+        }
     }
 
     for(const auto &track: score.tracks) {
@@ -381,7 +383,9 @@ minimidi::file::MidiFile to_midi(const Score<Tick> & score) {
             ));
         }
         // messages will be sorted by time in minimidi
-        midi.tracks.emplace_back(std::move(msgs));
+        if(!msgs.empty()) {
+            midi.tracks.emplace_back(std::move(msgs));
+        }
     }
     return midi;
 }
